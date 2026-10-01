@@ -299,6 +299,15 @@ button {
   padding: 7px 10px;
 }
 
+.edit-btn {
+  border: 0;
+  background: var(--primary);
+  color: white;
+  border-radius: 7px;
+  padding: 7px 10px;
+  margin-right: 5px;
+}
+
 /* TABLE */
 
 .table-wrap {
@@ -676,7 +685,7 @@ th {
 
         <div class="card">
 
-          <h2>
+          <h2 id="tituloFormularioLancamento">
             Novo lançamento
           </h2>
 
@@ -811,8 +820,25 @@ th {
               <button
                 class="primary-btn"
                 type="submit"
+                id="lancamentoSubmitBtn"
               >
                 Salvar lançamento
+              </button>
+
+            </div>
+
+            <div
+              class="field"
+              id="cancelarEdicaoContainer"
+              style="display:none;"
+            >
+
+              <button
+                class="secondary-btn"
+                type="button"
+                id="cancelarEdicaoBtn"
+              >
+                Cancelar edição
               </button>
 
             </div>
@@ -1311,6 +1337,8 @@ let categorias = [];
 let lancamentos = [];
 
 let grafico = null;
+
+let lancamentoEditandoId = null;
 
 
 /* =====================================================
@@ -2105,12 +2133,6 @@ function atualizarSelects() {
     );
 
 
-  const categoriaAtivas =
-    categorias.filter(
-      c => c.ativo !== false
-    );
-
-
   const centroOptions =
     `
       <option value="">
@@ -2152,15 +2174,17 @@ function atualizarSelects() {
       .join('');
 
 
-$('lancamentoCategoria').innerHTML =
-  `
-    <option value="">
-      Selecione
-    </option>
-  `;
+  $('lancamentoCategoria').innerHTML =
+    `
+      <option value="">
+        Selecione
+      </option>
+    `;
 
 }
-  $('lancamentoCentro').addEventListener(
+
+
+$('lancamentoCentro').addEventListener(
   'change',
   () => {
 
@@ -2235,6 +2259,143 @@ async function carregarLancamentos() {
 }
 
 
+/* =====================================================
+   CANCELAR EDIÇÃO
+===================================================== */
+
+function cancelarEdicaoLancamento() {
+
+  lancamentoEditandoId = null;
+
+  $('lancamentoForm').reset();
+
+  $('lancamentoData').value =
+    hoje();
+
+  $('lancamentoCategoria').innerHTML =
+    `
+      <option value="">
+        Selecione
+      </option>
+    `;
+
+  $('tituloFormularioLancamento').textContent =
+    'Novo lançamento';
+
+  $('lancamentoSubmitBtn').textContent =
+    'Salvar lançamento';
+
+  $('cancelarEdicaoContainer').style.display =
+    'none';
+
+}
+
+
+/* =====================================================
+   EDITAR LANÇAMENTO
+===================================================== */
+
+async function editarLancamento(id) {
+
+  const lancamento =
+    lancamentos.find(
+      l => l.id === id
+    );
+
+
+  if (!lancamento) {
+
+    alert(
+      'Lançamento não encontrado.'
+    );
+
+    return;
+
+  }
+
+
+  lancamentoEditandoId =
+    id;
+
+
+  $('lancamentoTipo').value =
+    lancamento.tipo || 'despesa';
+
+  $('lancamentoData').value =
+    lancamento.data_lancamento || '';
+
+  $('lancamentoValor').value =
+    lancamento.valor ?? '';
+
+  $('lancamentoCentro').value =
+    lancamento.centro_id || '';
+
+
+  const centroId =
+    lancamento.centro_id || '';
+
+  const categoriasDoCentro =
+    categorias.filter(
+      c =>
+        c.ativo !== false &&
+        c.centro_id === centroId
+    );
+
+
+  $('lancamentoCategoria').innerHTML =
+    `
+      <option value="">
+        Selecione
+      </option>
+    ` +
+    categoriasDoCentro
+      .map(
+        c => `
+          <option value="${c.id}">
+            ${escapeHtml(c.nome)}
+          </option>
+        `
+      )
+      .join('');
+
+
+  $('lancamentoCategoria').value =
+    lancamento.categoria_id || '';
+
+  $('lancamentoDescricao').value =
+    lancamento.descricao || '';
+
+  $('lancamentoObservacao').value =
+    lancamento.observacao || '';
+
+
+  $('tituloFormularioLancamento').textContent =
+    'Editar lançamento';
+
+  $('lancamentoSubmitBtn').textContent =
+    'Atualizar lançamento';
+
+  $('cancelarEdicaoContainer').style.display =
+    'flex';
+
+
+  abrirPagina('lancamentos');
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+
+}
+
+
+$('cancelarEdicaoBtn')
+  .addEventListener(
+    'click',
+    cancelarEdicaoLancamento
+  );
+
+
 $('lancamentoForm')
   .addEventListener(
     'submit',
@@ -2289,24 +2450,57 @@ $('lancamentoForm')
       }
 
 
-      const {
-        error
-      } =
-        await db
-          .from('lancamentos')
-          .insert([
-            {
+      let error;
+
+
+      if (lancamentoEditandoId) {
+
+        const resultado =
+          await db
+            .from('lancamentos')
+            .update({
               tipo,
               data_lancamento: data,
               valor,
               centro_id,
               categoria_id,
               descricao,
-              observacao,
-              criado_por: usuarioAtual?.id || null,
-              ativo: true
-            }
-          ]);
+              observacao
+            })
+            .eq(
+              'id',
+              lancamentoEditandoId
+            );
+
+
+        error =
+          resultado.error;
+
+      } else {
+
+        const resultado =
+          await db
+            .from('lancamentos')
+            .insert([
+              {
+                tipo,
+                data_lancamento: data,
+                valor,
+                centro_id,
+                categoria_id,
+                descricao,
+                observacao,
+                criado_por:
+                  usuarioAtual?.id || null,
+                ativo: true
+              }
+            ]);
+
+
+        error =
+          resultado.error;
+
+      }
 
 
       if (error) {
@@ -2323,10 +2517,13 @@ $('lancamentoForm')
       }
 
 
-      $('lancamentoForm').reset();
+      const estavaEditando =
+        Boolean(
+          lancamentoEditandoId
+        );
 
-      $('lancamentoData').value =
-        hoje();
+
+      cancelarEdicaoLancamento();
 
 
       await carregarLancamentos();
@@ -2337,8 +2534,11 @@ $('lancamentoForm')
 
       gerarRelatorio();
 
+
       alert(
-        'Lançamento salvo com sucesso!'
+        estavaEditando
+          ? 'Lançamento atualizado com sucesso!'
+          : 'Lançamento salvo com sucesso!'
       );
 
     }
@@ -2501,6 +2701,13 @@ function atualizarListaLancamentos() {
           </td>
 
           <td>
+
+            <button
+              class="edit-btn"
+              onclick="editarLancamento('${l.id}')"
+            >
+              Editar
+            </button>
 
             <button
               class="danger-btn"
