@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  >
+
+  <title>Controle Financeiro</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================
+       CABEÇALHO
+    ========================= */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #111827;
+      color: white;
+      padding: 14px 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+
+    .topbar-content {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #60a5fa;
+    }
+
+    .mes-atual {
+      font-size: 13px;
+      opacity: .85;
+    }
+
+    /* =========================
+       MENU
+    ========================= */
+
+    .menu {
+      position: sticky;
+      top: 57px;
+      z-index: 90;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .menu-content {
+      max-width: 1200px;
+      margin: auto;
+      display: flex;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    .menu button {
+      border: 0;
+      background: transparent;
+      color: #4b5563;
+      padding: 10px 13px;
+      border-radius: 8px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .menu button:hover,
+    .menu button.ativo {
+      background: #e8f0fe;
+      color: #2563eb;
+      font-weight: bold;
+    }
+
+    /* =========================
+       CONTAINER
+    ========================= */
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 16px;
+    }
+
+    .tela {
+      display: none;
+    }
+
+    .tela.ativa {
+      display: block;
+    }
+
+    .titulo {
+      margin-bottom: 16px;
+    }
+
+    .titulo h1 {
+      font-size: 23px;
+      margin-bottom: 4px;
+    }
+
+    .titulo p {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* =========================
+       CARDS DO DASHBOARD
+    ========================= */
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .card-resumo {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .card-resumo .label {
+      color: #6b7280;
+      font-size: 12px;
+      margin-bottom: 7px;
+    }
+
+    .card-resumo .valor {
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    .receita {
+      color: #15803d;
+    }
+
+    .despesa {
+      color: #dc2626;
+    }
+
+    .saldo {
+      color: #2563eb;
+    }
+
+    /* =========================
+       CARDS
+    ========================= */
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    }
+
+    .card h2 {
+      font-size: 17px;
+      margin-bottom: 14px;
+    }
+
+    /* =========================
+       FORMULÁRIOS
+    ========================= */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .campo.full {
+      grid-column: 1 / -1;
+    }
+
+    .campo label {
+      font-size: 13px;
+      font-weight: bold;
+      color: #374151;
+    }
+
+    .campo input,
+    .campo select,
+    .campo textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 11px;
+      background: white;
+      color: #111827;
+      outline: none;
+    }
+
+    .campo input:focus,
+    .campo select:focus,
+    .campo textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37,99,235,.1);
+    }
+
+    .campo textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    /* =========================
+       BOTÕES
+    ========================= */
+
+    .acoes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-weight: bold;
+    }
+
+    .btn-principal {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-receita {
+      background: #15803d;
+      color: white;
+    }
+
+    .btn-despesa {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-secundario {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-perigo {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    /* =========================
+       LANÇAMENTOS
+    ========================= */
+
+    .lista {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-lancamento {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .item-topo {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .item-descricao {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .item-valor {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .item-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      margin-top: 6px;
+      color: #6b7280;
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 7px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .badge-receita {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-despesa {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    /* =========================
+       TABELA
+    ========================= */
+
+    .tabela-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #4b5563;
+    }
+
+    /* =========================
+       GRÁFICOS
+    ========================= */
+
+    .grafico {
+      height: 250px;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      padding: 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fafafa;
+    }
+
+    .barra-container {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .barra {
+      width: 70%;
+      max-width: 45px;
+      background: #2563eb;
+      border-radius: 6px 6px 0 0;
+      min-height: 5px;
+    }
+
+    /* =========================
+       FILTROS
+    ========================= */
+
+    .filtros {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    /* =========================
+       VAZIO
+    ========================= */
+
+    .vazio {
+      padding: 30px 15px;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 700px) {
+
+      .topbar {
+        padding: 11px 12px;
+      }
+
+      .logo {
+        font-size: 17px;
+      }
+
+      .mes-atual {
+        font-size: 11px;
+      }
+
+      .menu {
+        top: 48px;
+      }
+
+      .menu-content {
+        padding: 6px;
+      }
+
+      .menu button {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+
+      .container {
+        padding: 11px;
+      }
+
+      .titulo h1 {
+        font-size: 20px;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .card-resumo {
+        padding: 12px;
+      }
+
+      .card-resumo .valor {
+        font-size: 17px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .campo.full {
+        grid-column: auto;
+      }
+
+      .filtros {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .filtros .campo:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .acoes {
+        flex-direction: column;
+      }
+
+      .item-topo {
+        align-items: flex-start;
+      }
+
+      .grafico {
+        height: 200px;
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 380px) {
+
+      .cards {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .card-resumo .valor {
+        font-size: 15px;
+      }
+
+      .filtros {
+        grid-template-columns: 1fr;
+      }
+
+      .filtros .campo:last-child {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       CABEÇALHO
+  ========================== -->
+
+  <header class="topbar">
+    <div class="topbar-content">
+
+      <div class="logo">
+        Controle <span>Financeiro</span>
+      </div>
+
+      <div class="mes-atual" id="mesAtual">
+        Outubro/2026
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- =========================
+       MENU
+  ========================== -->
+
+  <nav class="menu">
+
+    <div class="menu-content">
+
+      <button
+        class="menu-btn ativo"
+        data-tela="dashboard">
+        Dashboard
+      </button>
+
+      <button
+        class="menu-btn"
+        data-tela="lancamentos">
+        Lançamentos
+      </button>
+
+      <button
+        class="menu-btn"
+        data-tela="receitas">
+        Receitas
+      </button>
+
+      <button
+        class="menu-btn"
+        data-tela="despesas">
+        Despesas
+      </button>
+
+      <button
+        class="menu-btn"
+        data-tela="cadastros">
+        Cadastros
+      </button>
+
+      <button
+        class="menu-btn"
+        data-tela="relatorios">
+        Relatórios
+      </button>
+
+    </div>
+
+  </nav>
+
+
+  <main class="container">
+
+
+    <!-- =========================
+         DASHBOARD
+    ========================== -->
+
+    <section
+      id="dashboard"
+      class="tela ativa">
+
+      <div class="titulo">
+        <h1>Visão geral</h1>
+        <p>
+          Controle financeiro de todos os seus negócios e vida pessoal.
+        </p>
+      </div>
+
+
+      <div class="cards">
+
+        <div class="card-resumo">
+          <div class="label">Receitas</div>
+          <div
+            class="valor receita"
+            id="resumoReceitas">
+            R$ 0,00
+          </div>
+        </div>
+
+        <div class="card-resumo">
+          <div class="label">Despesas</div>
+          <div
+            class="valor despesa"
+            id="resumoDespesas">
+            R$ 0,00
+          </div>
+        </div>
+
+        <div class="card-resumo">
+          <div class="label">Saldo</div>
+          <div
+            class="valor saldo"
+            id="resumoSaldo">
+            R$ 0,00
+          </div>
+        </div>
+
+        <div class="card-resumo">
+          <div class="label">Lançamentos</div>
+          <div
+            class="valor"
+            id="resumoLancamentos">
+            0
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>Resultado por negócio</h2>
+
+        <div class="lista">
+
+          <div class="item-lancamento">
+            <div class="item-topo">
+              <div class="item-descricao">
+                Academia
+              </div>
+
+              <div class="item-valor saldo">
+                R$ 0,00
+              </div>
+            </div>
+          </div>
+
+          <div class="item-lancamento">
+            <div class="item-topo">
+              <div class="item-descricao">
+                Onix / Omega
+              </div>
+
+              <div class="item-valor saldo">
+                R$ 0,00
+              </div>
+            </div>
+          </div>
+
+          <div class="item-lancamento">
+            <div class="item-topo">
+              <div class="item-descricao">
+                Viagens / Particular
+              </div>
+
+              <div class="item-valor saldo">
+                R$ 0,00
+              </div>
+            </div>
+          </div>
+
+          <div class="item-lancamento">
+            <div class="item-topo">
+              <div class="item-descricao">
+                Vida Pessoal
+              </div>
+
+              <div class="item-valor saldo">
+                R$ 0,00
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>Gráfico mensal</h2>
+
+        <div class="grafico">
+
+          <div class="barra-container">
+            <div
+              class="barra"
+              style="height: 20%">
+              </div>
+          </div>
+
+          <div class="barra-container">
+            <div
+              class="barra"
+              style="height: 35%">
+              </div>
+          </div>
+
+          <div class="barra-container">
+            <div
+              class="barra"
+              style="height: 28%">
+              </div>
+          </div>
+
+          <div class="barra-container">
+            <div
+              class="barra"
+              style="height: 45%">
+              </div>
+          </div>
+
+          <div class="barra-container">
+            <div
+              class="barra"
+              style="height: 55%">
+              </div>
+          </div>
+
+          <div class="barra-container">
+            <div
+              class="barra"
+              style="height: 40%">
+              </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         LANÇAMENTOS
+    ========================== -->
+
+    <section
+      id="lancamentos"
+      class="tela">
+
+      <div class="titulo">
+        <h1>Lançamentos</h1>
+        <p>
+          Consulte e controle todas as movimentações.
+        </p>
+      </div>
+
+      <div class="card">
+
+        <div class="filtros">
+
+          <div class="campo">
+            <label>Período</label>
+            <input
+              type="month"
+              id="filtroMes"
+              value="2026-10">
+          </div>
+
+          <div class="campo">
+            <label>Tipo</label>
+
+            <select id="filtroTipo">
+              <option value="">Todos</option>
+              <option value="receita">Receitas</option>
+              <option value="despesa">Despesas</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label>Negócio</label>
+
+            <select id="filtroCentro">
+              <option value="">Todos</option>
+              <option>Academia</option>
+              <option>Onix / Omega</option>
+              <option>Viagens / Particular</option>
+              <option>Vida Pessoal</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div
+          id="listaLancamentos"
+          class="lista">
+
+          <div class="vazio">
+            Nenhum lançamento cadastrado.
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         RECEITAS
+    ========================== -->
+
+    <section
+      id="receitas"
+      class="tela">
+
+      <div class="titulo">
+        <h1>Nova receita</h1>
+        <p>
+          Registre uma entrada financeira.
+        </p>
+      </div>
+
+      <div class="card">
+
+        <form id="formReceita">
+
+          <div class="form-grid">
+
+            <div class="campo">
+              <label>Data</label>
+
+              <input
+                type="date"
+                id="receitaData"
+                required>
+
+            </div>
+
+
+            <div class="campo">
+              <label>Valor</label>
+
+              <input
+                type="number"
+                id="receitaValor"
+                step="0.01"
+                min="0"
+                placeholder="0,00"
+                required>
+
+            </div>
+
+
+            <div class="campo">
+              <label>Negócio / Centro</label>
+
+              <select
+                id="receitaCentro"
+                required>
+
+                <option value="">
+                  Selecione
+                </option>
+
+                <option>
+                  Academia
+                </option>
+
+                <option>
+                  Onix / Omega
+                </option>
+
+                <option>
+                  Viagens / Particular
+                </option>
+
+                <option>
+                  Vida Pessoal
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="campo">
+              <label>Categoria</label>
+
+              <select
+                id="receitaCategoria"
+                required>
+
+                <option value="">
+                  Selecione
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="campo full">
+
+              <label>Descrição</label>
+
+              <input
+                type="text"
+                id="receitaDescricao"
+                placeholder="Ex.: Mensalidade academia"
+                required>
+
+            </div>
+
+
+            <div class="campo full">
+
+              <label>Observação</label>
+
+              <textarea
+                id="receitaObservacao"
+                placeholder="Observações opcionais">
+              </textarea>
+
+            </div>
+
+          </div>
+
+
+          <div class="acoes">
+
+            <button
+              type="submit"
+              class="btn btn-receita">
+              Salvar receita
+            </button>
+
+            <button
+              type="reset"
+              class="btn btn-secundario">
+              Limpar
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         DESPESAS
+    ========================== -->
+
+    <section
+      id="despesas"
+      class="tela">
+
+      <div class="titulo">
+        <h1>Nova despesa</h1>
+        <p>
+          Registre uma saída financeira.
+        </p>
+      </div>
+
+      <div class="card">
+
+        <form id="formDespesa">
+
+          <div class="form-grid">
+
+            <div class="campo">
+              <label>Data</label>
+
+              <input
+                type="date"
+                id="despesaData"
+                required>
+
+            </div>
+
+
+            <div class="campo">
+              <label>Valor</label>
+
+              <input
+                type="number"
+                id="despesaValor"
+                step="0.01"
+                min="0"
+                placeholder="0,00"
+                required>
+
+            </div>
+
+
+            <div class="campo">
+              <label>Negócio / Centro</label>
+
+              <select
+                id="despesaCentro"
+                required>
+
+                <option value="">
+                  Selecione
+                </option>
+
+                <option>
+                  Academia
+                </option>
+
+                <option>
+                  Onix / Omega
+                </option>
+
+                <option>
+                  Viagens / Particular
+                </option>
+
+                <option>
+                  Vida Pessoal
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="campo">
+              <label>Categoria</label>
+
+              <select
+                id="despesaCategoria"
+                required>
+
+                <option value="">
+                  Selecione
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="campo full">
+
+              <label>Descrição</label>
+
+              <input
+                type="text"
+                id="despesaDescricao"
+                placeholder="Ex.: Conta de energia"
+                required>
+
+            </div>
+
+
+            <div class="campo">
+
+              <label>Forma de pagamento</label>
+
+              <select id="despesaForma">
+
+                <option value="">
+                  Selecione
+                </option>
+
+                <option>Dinheiro</option>
+                <option>PIX</option>
+                <option>Débito</option>
+                <option>Crédito</option>
+                <option>Boleto</option>
+                <option>Transferência</option>
+
+              </select>
+
+            </div>
+
+
+            <div class="campo">
+
+              <label>Status</label>
+
+              <select id="despesaPago">
+
+                <option value="true">
+                  Pago
+                </option>
+
+                <option value="false">
+                  Pendente
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="campo full">
+
+              <label>Observação</label>
+
+              <textarea
+                id="despesaObservacao"
+                placeholder="Observações opcionais">
+              </textarea>
+
+            </div>
+
+          </div>
+
+
+          <div class="acoes">
+
+            <button
+              type="submit"
+              class="btn btn-despesa">
+              Salvar despesa
+            </button>
+
+            <button
+              type="reset"
+              class="btn btn-secundario">
+              Limpar
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         CADASTROS
+    ========================== -->
+
+    <section
+      id="cadastros"
+      class="tela">
+
+      <div class="titulo">
+        <h1>Cadastros</h1>
+        <p>
+          Configure negócios e categorias.
+        </p>
+      </div>
+
+
+      <div class="card">
+
+        <h2>Negócios / Centros</h2>
+
+        <div class="form-grid">
+
+          <div class="campo">
+            <label>Novo negócio</label>
+
+            <input
+              type="text"
+              id="novoCentro"
+              placeholder="Ex.: Novo negócio">
+
+          </div>
+
+        </div>
+
+        <div class="acoes">
+
+          <button
+            class="btn btn-principal"
+            id="btnAdicionarCentro">
+            Adicionar negócio
+          </button>
+
+        </div>
+
+
+        <div
+          id="listaCentros"
+          class="lista"
+          style="margin-top:15px">
+
+          <div class="item-lancamento">
+            Academia
+          </div>
+
+          <div class="item-lancamento">
+            Onix / Omega
+          </div>
+
+          <div class="item-lancamento">
+            Viagens / Particular
+          </div>
+
+          <div class="item-lancamento">
+            Vida Pessoal
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>Categorias</h2>
+
+        <div class="form-grid">
+
+          <div class="campo">
+            <label>Negócio</label>
+
+            <select id="categoriaCentro">
+
+              <option>
+                Vida Pessoal
+              </option>
+
+              <option>
+                Academia
+              </option>
+
+              <option>
+                Onix / Omega
+              </option>
+
+              <option>
+                Viagens / Particular
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="campo">
+            <label>Tipo</label>
+
+            <select id="categoriaTipo">
+
+              <option value="despesa">
+                Despesa
+              </option>
+
+              <option value="receita">
+                Receita
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <div class="campo full">
+
+            <label>Nome da categoria</label>
+
+            <input
+              type="text"
+              id="novaCategoria"
+              placeholder="Ex.: Alimentação">
+
+          </div>
+
+        </div>
+
+
+        <div class="acoes">
+
+          <button
+            class="btn btn-principal"
+            id="btnAdicionarCategoria">
+            Adicionar categoria
+          </button>
+
+        </div>
+
+
+        <div
+          id="listaCategorias"
+          class="lista"
+          style="margin-top:15px">
+
+          <div class="vazio">
+            As categorias aparecerão aqui.
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         RELATÓRIOS
+    ========================== -->
+
+    <section
+      id="relatorios"
+      class="tela">
+
+      <div class="titulo">
+        <h1>Relatórios</h1>
+        <p>
+          Análise financeira por período e categoria.
+        </p>
+      </div>
+
+
+      <div class="card">
+
+        <div class="filtros">
+
+          <div class="campo">
+            <label>Início</label>
+
+            <input
+              type="date"
+              id="relatorioInicio">
+          </div>
+
+
+          <div class="campo">
+            <label>Fim</label>
+
+            <input
+              type="date"
+              id="relatorioFim">
+          </div>
+
+
+          <div class="campo">
+            <label>Negócio</label>
+
+            <select id="relatorioCentro">
+
+              <option value="">
+                Todos
+              </option>
+
+              <option>
+                Academia
+              </option>
+
+              <option>
+                Onix / Omega
+              </option>
+
+              <option>
+                Viagens / Particular
+              </option>
+
+              <option>
+                Vida Pessoal
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <div class="acoes">
+
+          <button
+            class="btn btn-principal"
+            id="btnGerarRelatorio">
+            Gerar relatório
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="cards">
+
+        <div class="card-resumo">
+          <div class="label">
+            Total de receitas
+          </div>
+
+          <div
+            class="valor receita"
+            id="relatorioReceitas">
+            R$ 0,00
+          </div>
+        </div>
+
+
+        <div class="card-resumo">
+          <div class="label">
+            Total de despesas
+          </div>
+
+          <div
+            class="valor despesa"
+            id="relatorioDespesas">
+            R$ 0,00
+          </div>
+        </div>
+
+
+        <div class="card-resumo">
+          <div class="label">
+            Resultado
+          </div>
+
+          <div
+            class="valor saldo"
+            id="relatorioResultado">
+            R$ 0,00
+          </div>
+        </div>
+
+
+        <div class="card-resumo">
+          <div class="label">
+            Margem
+          </div>
+
+          <div
+            class="valor"
+            id="relatorioMargem">
+            0%
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>DRE</h2>
+
+        <div class="tabela-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Descrição</th>
+                <th>Valor</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+                <td>Receita</td>
+
+                <td
+                  class="receita">
+                  R$ 0,00
+                </td>
+              </tr>
+
+              <tr>
+                <td>Despesas</td>
+
+                <td
+                  class="despesa">
+                  R$ 0,00
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <strong>Resultado</strong>
+                </td>
+
+                <td
+                  class="saldo">
+                  <strong>
+                    R$ 0,00
+                  </strong>
+                </td>
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+      <div class="card">
+
+        <h2>Despesas por categoria</h2>
+
+        <div
+          id="graficoCategorias"
+          class="vazio">
+          Nenhum dado para apresentar.
+        </div>
+
+      </div>
+
+    </section>
+
+
+  </main>
+
+
+  <script>
+
+    /* =========================
+       NAVEGAÇÃO
+    ========================== */
+
+    const botoesMenu =
+      document.querySelectorAll('.menu-btn');
+
+    const telas =
+      document.querySelectorAll('.tela');
+
+
+    function abrirTela(id) {
+
+      telas.forEach(tela => {
+        tela.classList.remove('ativa');
+      });
+
+      botoesMenu.forEach(botao => {
+        botao.classList.remove('ativo');
+      });
+
+      const tela =
+        document.getElementById(id);
+
+      const botao =
+        document.querySelector(
+          `.menu-btn[data-tela="${id}"]`
+        );
+
+      if (tela) {
+        tela.classList.add('ativa');
+      }
+
+      if (botao) {
+        botao.classList.add('ativo');
+      }
+
+      localStorage.setItem(
+        'ultimaTelaFinanceiro',
+        id
+      );
+    }
+
+
+    botoesMenu.forEach(botao => {
+
+      botao.addEventListener(
+        'click',
+        () => {
+
+          abrirTela(
+            botao.dataset.tela
+          );
+
+        }
+      );
+
+    });
+
+
+    /* =========================
+       DATA ATUAL
+    ========================== */
+
+    function hoje() {
+
+      const data = new Date();
+
+      const ano =
+        data.getFullYear();
+
+      const mes =
+        String(
+          data.getMonth() + 1
+        ).padStart(2, '0');
+
+      const dia =
+        String(
+          data.getDate()
+        ).padStart(2, '0');
+
+      return `${ano}-${mes}-${dia}`;
+    }
+
+
+    function definirDatas() {
+
+      const data = hoje();
+
+      const receitaData =
+        document.getElementById(
+          'receitaData'
+        );
+
+      const despesaData =
+        document.getElementById(
+          'despesaData'
+        );
+
+      if (receitaData) {
+        receitaData.value = data;
+      }
+
+      if (despesaData) {
+        despesaData.value = data;
+      }
+
+      const primeiroDia =
+        new Date();
+
+      primeiroDia.setDate(1);
+
+      const inicio =
+        primeiroDia
+          .toISOString()
+          .slice(0, 10);
+
+      const fim = data;
+
+      const relatorioInicio =
+        document.getElementById(
+          'relatorioInicio'
+        );
+
+      const relatorioFim =
+        document.getElementById(
+          'relatorioFim'
+        );
+
+      if (relatorioInicio) {
+        relatorioInicio.value =
+          inicio;
+      }
+
+      if (relatorioFim) {
+        relatorioFim.value =
+          fim;
+      }
+    }
+
+
+    /* =========================
+       FORMATAÇÃO
+    ========================== */
+
+    function formatarMoeda(valor) {
+
+      return Number(valor || 0)
+        .toLocaleString(
+          'pt-BR',
+          {
+            style: 'currency',
+            currency: 'BRL'
+          }
+        );
+
+    }
+
+
+    /* =========================
+       FORMULÁRIOS INICIAIS
+    ========================== */
+
+    const formReceita =
+      document.getElementById(
+        'formReceita'
+      );
+
+    if (formReceita) {
+
+      formReceita.addEventListener(
+        'submit',
+        event => {
+
+          event.preventDefault();
+
+          alert(
+            'A conexão com o banco será ativada na próxima etapa.'
+          );
+
+        }
+      );
+
+    }
+
+
+    const formDespesa =
+      document.getElementById(
+        'formDespesa'
+      );
+
+    if (formDespesa) {
+
+      formDespesa.addEventListener(
+        'submit',
+        event => {
+
+          event.preventDefault();
+
+          alert(
+            'A conexão com o banco será ativada na próxima etapa.'
+          );
+
+        }
+      );
+
+    }
+
+
+    /* =========================
+       CADASTROS
+    ========================== */
+
+    const btnAdicionarCentro =
+      document.getElementById(
+        'btnAdicionarCentro'
+      );
+
+    if (btnAdicionarCentro) {
+
+      btnAdicionarCentro.addEventListener(
+        'click',
+        () => {
+
+          const campo =
+            document.getElementById(
+              'novoCentro'
+            );
+
+          const nome =
+            campo.value.trim();
+
+          if (!nome) {
+
+            alert(
+              'Digite o nome do negócio.'
+            );
+
+            return;
+          }
+
+          alert(
+            'O cadastro será conectado ao Supabase na próxima etapa.'
+          );
+
+          campo.value = '';
+
+        }
+      );
+
+    }
+
+
+    const btnAdicionarCategoria =
+      document.getElementById(
+        'btnAdicionarCategoria'
+      );
+
+    if (btnAdicionarCategoria) {
+
+      btnAdicionarCategoria.addEventListener(
+        'click',
+        () => {
+
+          const campo =
+            document.getElementById(
+              'novaCategoria'
+            );
+
+          const nome =
+            campo.value.trim();
+
+          if (!nome) {
+
+            alert(
+              'Digite o nome da categoria.'
+            );
+
+            return;
+          }
+
+          alert(
+            'O cadastro será conectado ao Supabase na próxima etapa.'
+          );
+
+          campo.value = '';
+
+        }
+      );
+
+    }
+
+
+    /* =========================
+       INICIALIZAÇÃO
+    ========================== */
+
+    definirDatas();
+
+    const ultimaTela =
+      localStorage.getItem(
+        'ultimaTelaFinanceiro'
+      );
+
+    if (ultimaTela) {
+      abrirTela(ultimaTela);
+    }
+
+  </script>
+
+</body>
+</html>
