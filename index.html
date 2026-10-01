@@ -588,9 +588,21 @@ th {
         class="page active"
       >
 
-        <h1 class="page-title">
-          Dashboard
-        </h1>
+<h1 class="page-title">
+  Dashboard
+</h1>
+
+<p
+  id="dashboardPeriodo"
+  style="
+    margin-top: -10px;
+    margin-bottom: 20px;
+    color: #64748b;
+    font-size: 15px;
+  "
+>
+  Resumo do mês
+</p>
 
         <div class="cards">
 
@@ -2803,6 +2815,16 @@ function atualizarDashboard() {
 
   const periodoAtual =
     `${anoAtual}-${mesAtual}`;
+  const nomeMes =
+  dataAtual.toLocaleDateString(
+    'pt-BR',
+    {
+      month: 'long'
+    }
+  );
+
+$('dashboardPeriodo').textContent =
+  `Resumo de ${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${anoAtual}`;
 
 
   const lista =
