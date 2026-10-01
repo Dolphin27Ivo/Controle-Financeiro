@@ -2152,23 +2152,46 @@ function atualizarSelects() {
       .join('');
 
 
-  $('lancamentoCategoria').innerHTML =
-    `
-      <option value="">
-        Selecione
-      </option>
-    ` +
-    categoriaAtivas
-      .map(
-        c => `
-          <option value="${c.id}">
-            ${escapeHtml(c.nome)}
-          </option>
-        `
-      )
-      .join('');
+$('lancamentoCategoria').innerHTML =
+  `
+    <option value="">
+      Selecione
+    </option>
+  `;
 
 }
+  $('lancamentoCentro').addEventListener(
+  'change',
+  () => {
+
+    const centroId =
+      $('lancamentoCentro').value;
+
+    const categoriasDoCentro =
+      categorias.filter(
+        c =>
+          c.ativo !== false &&
+          c.centro_id === centroId
+      );
+
+    $('lancamentoCategoria').innerHTML =
+      `
+        <option value="">
+          Selecione
+        </option>
+      ` +
+      categoriasDoCentro
+        .map(
+          c => `
+            <option value="${c.id}">
+              ${escapeHtml(c.nome)}
+            </option>
+          `
+        )
+        .join('');
+
+  }
+);
 
 
 /* =====================================================
