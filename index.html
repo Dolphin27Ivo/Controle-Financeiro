@@ -572,12 +572,13 @@ th {
       >
         📊 Relatórios
       </button>
+
       <button
-  class="menu-btn"
-  data-page="dre"
->
-  📑 DRE
-</button>
+        class="menu-btn"
+        data-page="dre"
+      >
+        📑 DRE
+      </button>
 
     </nav>
 
@@ -594,25 +595,26 @@ th {
         class="page active"
       >
 
-<h1 class="page-title">
-  Dashboard
-</h1>
+        <h1 class="page-title">
+          Dashboard
+        </h1>
 
-<p
-  id="dashboardPeriodo"
-  style="
-    margin-top: -10px;
-    margin-bottom: 20px;
-    color: #64748b;
-    font-size: 15px;
-  "
->
-  Resumo do mês
-</p>
+        <p
+          id="dashboardPeriodo"
+          style="
+            margin-top: -10px;
+            margin-bottom: 20px;
+            color: #64748b;
+            font-size: 15px;
+          "
+        >
+          Resumo do mês
+        </p>
 
         <div class="cards">
 
           <div class="card">
+
             <div class="card-title">
               Receitas
             </div>
@@ -623,10 +625,12 @@ th {
             >
               R$ 0,00
             </div>
+
           </div>
 
 
           <div class="card">
+
             <div class="card-title">
               Despesas
             </div>
@@ -637,10 +641,12 @@ th {
             >
               R$ 0,00
             </div>
+
           </div>
 
 
           <div class="card">
+
             <div class="card-title">
               Saldo
             </div>
@@ -651,6 +657,7 @@ th {
             >
               R$ 0,00
             </div>
+
           </div>
 
 
@@ -679,7 +686,9 @@ th {
           </h2>
 
           <div class="chart-box">
+
             <canvas id="graficoDashboard"></canvas>
+
           </div>
 
         </div>
@@ -718,7 +727,10 @@ th {
                 Tipo
               </label>
 
-              <select id="lancamentoTipo" required>
+              <select
+                id="lancamentoTipo"
+                required
+              >
 
                 <option value="despesa">
                   Despesa
@@ -776,9 +788,11 @@ th {
                 id="lancamentoCentro"
                 required
               >
+
                 <option value="">
                   Selecione
                 </option>
+
               </select>
 
             </div>
@@ -794,9 +808,11 @@ th {
                 id="lancamentoCategoria"
                 required
               >
+
                 <option value="">
                   Selecione
                 </option>
+
               </select>
 
             </div>
@@ -844,6 +860,7 @@ th {
               </button>
 
             </div>
+
 
             <div
               class="field"
@@ -997,7 +1014,6 @@ th {
               <label>
                 Nome
               </label>
-
               <input
                 id="centroNome"
                 type="text"
@@ -1321,6 +1337,8 @@ th {
         </div>
 
       </section>
+
+
       <!-- =========================
            DRE
       ========================= -->
@@ -1864,6 +1882,7 @@ async function carregarTudo() {
   gerarDre();
 
 }
+
   $('dreCentro').innerHTML =
   `
     <option value="">
@@ -1998,9 +2017,7 @@ function atualizarListaCentros() {
     $('centrosLista');
 
   if (!lista) return;
-
-
-  const ativos =
+    const ativos =
     centros.filter(
       centro =>
         centro.ativo !== false
@@ -2373,6 +2390,7 @@ function atualizarSelects() {
         `
       )
       .join('');
+
   $('dreCentro').innerHTML =
   `
     <option value="">
@@ -2388,6 +2406,7 @@ function atualizarSelects() {
       `
     )
     .join('');
+
   $('relatorioCentro').innerHTML =
   `
     <option value="">
@@ -2996,9 +3015,7 @@ async function desativarLancamento(id) {
   gerarRelatorio();
 
 }
-
-
-[
+  [
   'filtroInicio',
   'filtroFim',
   'filtroTipo',
@@ -3034,16 +3051,17 @@ function atualizarDashboard() {
 
   const periodoAtual =
     `${anoAtual}-${mesAtual}`;
-  const nomeMes =
-  dataAtual.toLocaleDateString(
-    'pt-BR',
-    {
-      month: 'long'
-    }
-  );
 
-$('dashboardPeriodo').textContent =
-  `Resumo de ${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${anoAtual}`;
+  const nomeMes =
+    dataAtual.toLocaleDateString(
+      'pt-BR',
+      {
+        month: 'long'
+      }
+    );
+
+  $('dashboardPeriodo').textContent =
+    `Resumo de ${nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1)}/${anoAtual}`;
 
 
   const lista =
@@ -3194,8 +3212,9 @@ function gerarRelatorio() {
 
   const fim =
     $('relatorioFim').value;
+
   const centro =
-  $('relatorioCentro').value;
+    $('relatorioCentro').value;
 
 
   if (inicio) {
@@ -3218,15 +3237,18 @@ function gerarRelatorio() {
       );
 
   }
-if (centro) {
 
-  lista =
-    lista.filter(
-      l =>
-        l.centro_id === centro
-    );
 
-}
+  if (centro) {
+
+    lista =
+      lista.filter(
+        l =>
+          l.centro_id === centro
+      );
+
+  }
+
 
   const receitas =
     lista
@@ -3360,7 +3382,216 @@ if (centro) {
         </tr>
       `;
 
+
+  atualizarGraficoCategoriasRelatorio(lista);
+
 }
+
+
+/* =====================================================
+   GRÁFICO DE DESPESAS POR CATEGORIA
+===================================================== */
+
+function atualizarGraficoCategoriasRelatorio(lista) {
+
+  const tabela =
+    $('relatorioCategorias');
+
+  if (!tabela) return;
+
+
+  let card =
+    $('cardGraficoCategoriasRelatorio');
+
+
+  if (!card) {
+
+    const cardTabela =
+      tabela.closest('.card');
+
+    if (!cardTabela) return;
+
+
+    card =
+      document.createElement('div');
+
+    card.id =
+      'cardGraficoCategoriasRelatorio';
+
+    card.className =
+      'card';
+
+    card.innerHTML = `
+
+      <h2>
+        Despesas por categoria
+      </h2>
+
+      <div
+        style="
+          position: relative;
+          width: 100%;
+          height: 360px;
+        "
+      >
+
+        <canvas
+          id="graficoCategoriasRelatorio"
+        ></canvas>
+
+      </div>
+
+    `;
+
+    cardTabela.parentNode.insertBefore(
+      card,
+      cardTabela
+    );
+
+  }
+
+
+  const canvas =
+    $('graficoCategoriasRelatorio');
+
+  if (!canvas) return;
+
+
+  if (
+    window.graficoCategoriasRelatorio
+  ) {
+
+    window.graficoCategoriasRelatorio.destroy();
+
+  }
+
+
+  const despesas =
+    lista.filter(
+      l =>
+        l.tipo === 'despesa'
+    );
+
+
+  const agrupado = {};
+
+
+  despesas.forEach(l => {
+
+    const categoria =
+      categorias.find(
+        c =>
+          c.id ===
+          l.categoria_id
+      );
+
+
+    const nome =
+      categoria
+        ? categoria.nome
+        : 'Sem categoria';
+
+
+    if (!agrupado[nome]) {
+
+      agrupado[nome] = 0;
+
+    }
+
+
+    agrupado[nome] +=
+      Number(l.valor || 0);
+
+  });
+
+
+  const dados =
+    Object.entries(
+      agrupado
+    )
+    .sort(
+      (a, b) =>
+        b[1] - a[1]
+    );
+
+
+  window.graficoCategoriasRelatorio =
+    new Chart(
+      canvas,
+      {
+
+        type: 'bar',
+
+        data: {
+
+          labels:
+            dados.map(
+              item =>
+                item[0]
+            ),
+
+          datasets: [
+
+            {
+
+              label:
+                'Despesas',
+
+              data:
+                dados.map(
+                  item =>
+                    item[1]
+                ),
+
+              backgroundColor:
+                '#dc2626'
+
+            }
+
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          plugins: {
+
+            legend: {
+              display: false
+            }
+
+          },
+
+          scales: {
+
+            y: {
+
+              beginAtZero: true,
+
+              ticks: {
+
+                callback:
+                  value =>
+                    moeda(value)
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+    );
+
+}
+
+
 /* =====================================================
    DRE
 ===================================================== */
@@ -3468,87 +3699,102 @@ function gerarDre() {
 
   /* MOSTRAR NA TELA */
 
-$('dreReceita').textContent =
-  moeda(receitas);
+  $('dreReceita').textContent =
+    moeda(receitas);
 
-$('dreDespesa').textContent =
-  moeda(despesas);
+  $('dreDespesa').textContent =
+    moeda(despesas);
 
-$('dreResultado').textContent =
-  moeda(resultado);
+  $('dreResultado').textContent =
+    moeda(resultado);
 
 
-/* DEMONSTRATIVO POR CATEGORIA */
+  /* DEMONSTRATIVO POR CATEGORIA */
 
-const categoriasDre = {};
+  const categoriasDre = {};
 
-lista.forEach(
-  l => {
 
-    const categoria =
-      categorias.find(
-        c =>
-          c.id === l.categoria_id
-      );
+  lista.forEach(
+    l => {
 
-    const nomeCategoria =
-      categoria
-        ? categoria.nome
-        : 'Sem categoria';
+      const categoria =
+        categorias.find(
+          c =>
+            c.id === l.categoria_id
+        );
 
-    const chave =
-      `${l.tipo}|${nomeCategoria}`;
 
-    if (!categoriasDre[chave]) {
+      const nomeCategoria =
+        categoria
+          ? categoria.nome
+          : 'Sem categoria';
 
-      categoriasDre[chave] = {
-        nome: nomeCategoria,
-        tipo: l.tipo,
-        total: 0
-      };
+
+      const chave =
+        `${l.tipo}|${nomeCategoria}`;
+
+
+      if (!categoriasDre[chave]) {
+
+        categoriasDre[chave] = {
+
+          nome:
+            nomeCategoria,
+
+          tipo:
+            l.tipo,
+
+          total:
+            0
+
+        };
+
+      }
+
+
+      categoriasDre[chave].total +=
+        Number(l.valor || 0);
 
     }
-
-    categoriasDre[chave].total +=
-      Number(l.valor || 0);
-
-  }
-);
+  );
 
 
-$('dreCategorias').innerHTML =
-  Object.values(categoriasDre)
-    .sort(
-      (a, b) =>
-        a.tipo.localeCompare(b.tipo) ||
-        a.nome.localeCompare(b.nome)
-    )
-    .map(
-      item => `
-        <tr>
+  $('dreCategorias').innerHTML =
+    Object.values(categoriasDre)
+      .sort(
+        (a, b) =>
+          a.tipo.localeCompare(b.tipo) ||
+          a.nome.localeCompare(b.nome)
+      )
+      .map(
+        item => `
 
-          <td>
-            ${escapeHtml(item.nome)}
-          </td>
+          <tr>
 
-          <td>
-            ${
-              item.tipo === 'receita'
-                ? 'Receita'
-                : 'Despesa'
-            }
-          </td>
+            <td>
+              ${escapeHtml(item.nome)}
+            </td>
 
-          <td>
-            ${moeda(item.total)}
-          </td>
+            <td>
+              ${
+                item.tipo === 'receita'
+                  ? 'Receita'
+                  : 'Despesa'
+              }
+            </td>
 
-        </tr>
-      `
-    )
-    .join('');
+            <td>
+              ${moeda(item.total)}
+            </td>
+
+          </tr>
+
+        `
+      )
+      .join('');
 
 }
+
 
 /* =====================================================
    ATUALIZAÇÃO DAS LISTAS
