@@ -1291,7 +1291,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   'sb_publishable_HQo33m6wNsiVZ89lklJJaw_wk5ms0y6';
 
-
 const db =
   window.supabase.createClient(
     SUPABASE_URL,
@@ -1527,6 +1526,8 @@ db.auth.onAuthStateChange(
       $('app').style.display =
         'none';
 
+      usuarioAtual = null;
+
     }
 
   }
@@ -1663,7 +1664,7 @@ async function carregarCentros() {
     error
   } =
     await db
-      .from('centros_financeiros')
+      .from('centros')
       .select('*')
       .order(
         'nome',
@@ -1678,7 +1679,8 @@ async function carregarCentros() {
     console.error(error);
 
     alert(
-      'Erro ao carregar centros financeiros.'
+      'Erro ao carregar centros financeiros:\n\n' +
+      error.message
     );
 
     return;
@@ -1722,7 +1724,7 @@ $('centroForm')
         error
       } =
         await db
-          .from('centros_financeiros')
+          .from('centros')
           .insert([
             {
               nome,
@@ -1770,7 +1772,14 @@ function atualizarListaCentros() {
   if (!lista) return;
 
 
-  if (!centros.length) {
+  const ativos =
+    centros.filter(
+      centro =>
+        centro.ativo !== false
+    );
+
+
+  if (!ativos.length) {
 
     lista.innerHTML =
       '<p>Nenhum centro cadastrado.</p>';
@@ -1781,7 +1790,7 @@ function atualizarListaCentros() {
 
 
   lista.innerHTML =
-    centros.map(centro => `
+    ativos.map(centro => `
 
       <div class="category-item">
 
@@ -1826,7 +1835,7 @@ async function desativarCentro(id) {
     error
   } =
     await db
-      .from('centros_financeiros')
+      .from('centros')
       .update({
         ativo: false
       })
@@ -1862,7 +1871,7 @@ async function carregarCategorias() {
     error
   } =
     await db
-      .from('categorias_financeiras')
+      .from('categorias')
       .select('*')
       .order(
         'nome',
@@ -1877,7 +1886,8 @@ async function carregarCategorias() {
     console.error(error);
 
     alert(
-      'Erro ao carregar categorias.'
+      'Erro ao carregar categorias:\n\n' +
+      error.message
     );
 
     return;
@@ -1926,7 +1936,7 @@ $('categoriaForm')
         error
       } =
         await db
-          .from('categorias_financeiras')
+          .from('categorias')
           .insert([
             {
               centro_id,
@@ -2058,7 +2068,7 @@ async function desativarCategoria(id) {
     error
   } =
     await db
-      .from('categorias_financeiras')
+      .from('categorias')
       .update({
         ativo: false
       })
@@ -2172,10 +2182,10 @@ async function carregarLancamentos() {
     error
   } =
     await db
-      .from('lancamentos_financeiros')
+      .from('lancamentos')
       .select('*')
       .order(
-        'data',
+        'data_lancamento',
         {
           ascending: false
         }
@@ -2260,16 +2270,17 @@ $('lancamentoForm')
         error
       } =
         await db
-          .from('lancamentos_financeiros')
+          .from('lancamentos')
           .insert([
             {
               tipo,
-              data,
+              data_lancamento: data,
               valor,
               centro_id,
               categoria_id,
               descricao,
               observacao,
+              criado_por: usuarioAtual?.id || null,
               ativo: true
             }
           ]);
@@ -2340,7 +2351,8 @@ function atualizarListaLancamentos() {
 
     lista =
       lista.filter(
-        l => l.data >= inicio
+        l =>
+          l.data_lancamento >= inicio
       );
 
   }
@@ -2350,7 +2362,8 @@ function atualizarListaLancamentos() {
 
     lista =
       lista.filter(
-        l => l.data <= fim
+        l =>
+          l.data_lancamento <= fim
       );
 
   }
@@ -2421,7 +2434,7 @@ function atualizarListaLancamentos() {
         <tr>
 
           <td>
-            ${escapeHtml(l.data || '')}
+            ${escapeHtml(l.data_lancamento || '')}
           </td>
 
           <td class="${
@@ -2497,7 +2510,7 @@ async function desativarLancamento(id) {
     error
   } =
     await db
-      .from('lancamentos_financeiros')
+      .from('lancamentos')
       .update({
         ativo: false
       })
@@ -2697,7 +2710,8 @@ function gerarRelatorio() {
 
     lista =
       lista.filter(
-        l => l.data >= inicio
+        l =>
+          l.data_lancamento >= inicio
       );
 
   }
@@ -2707,7 +2721,8 @@ function gerarRelatorio() {
 
     lista =
       lista.filter(
-        l => l.data <= fim
+        l =>
+          l.data_lancamento <= fim
       );
 
   }
