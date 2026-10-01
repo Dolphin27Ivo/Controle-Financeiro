@@ -1190,26 +1190,32 @@ th {
             Período
           </h2>
 
-          <div class="filters">
+<div class="filters">
 
-            <input
-              id="relatorioInicio"
-              type="date"
-            >
+  <input
+    id="relatorioInicio"
+    type="date"
+  >
 
-            <input
-              id="relatorioFim"
-              type="date"
-            >
+  <input
+    id="relatorioFim"
+    type="date"
+  >
 
-            <button
-              class="primary-btn"
-              id="gerarRelatorioBtn"
-            >
-              Gerar relatório
-            </button>
+  <select id="relatorioCentro">
+    <option value="">
+      Todos os centros
+    </option>
+  </select>
 
-          </div>
+  <button
+    class="primary-btn"
+    id="gerarRelatorioBtn"
+  >
+    Gerar relatório
+  </button>
+
+</div>
 
         </div>
 
@@ -2170,6 +2176,7 @@ function atualizarSelects() {
 
 
   $('filtroCentro').innerHTML =
+    
     `
       <option value="">
         Todos os centros
@@ -2184,6 +2191,21 @@ function atualizarSelects() {
         `
       )
       .join('');
+  $('relatorioCentro').innerHTML =
+  `
+    <option value="">
+      Todos os centros
+    </option>
+  ` +
+  centroAtivos
+    .map(
+      c => `
+        <option value="${c.id}">
+          ${escapeHtml(c.nome)}
+        </option>
+      `
+    )
+    .join('');
 
 
   $('lancamentoCategoria').innerHTML =
@@ -2975,6 +2997,8 @@ function gerarRelatorio() {
 
   const fim =
     $('relatorioFim').value;
+  const centro =
+  $('relatorioCentro').value;
 
 
   if (inicio) {
@@ -2997,7 +3021,15 @@ function gerarRelatorio() {
       );
 
   }
+if (centro) {
 
+  lista =
+    lista.filter(
+      l =>
+        l.centro_id === centro
+    );
+
+}
 
   const receitas =
     lista
