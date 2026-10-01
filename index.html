@@ -1,1853 +1,2883 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-  >
-
-  <title>Controle Financeiro</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --success: #16a34a;
-      --danger: #dc2626;
-      --warning: #d97706;
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #172033;
-      --muted: #667085;
-      --border: #e5e7eb;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    /* =========================
-       LOGIN
-    ========================= */
-
-    #loginScreen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      background: white;
-      border-radius: 18px;
-      padding: 28px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.08);
-    }
-
-    .login-title {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .login-title h1 {
-      margin: 0 0 8px;
-      font-size: 26px;
-    }
-
-    .login-title p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* =========================
-       APP
-    ========================= */
-
-    #app {
-      display: none;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      background: white;
-      border-bottom: 1px solid var(--border);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 21px;
-    }
-
-    .brand span {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .user-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .user-name {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .layout {
-      display: flex;
-      min-height: calc(100vh - 69px);
-    }
-
-    /* =========================
-       MENU
-    ========================= */
-
-    .sidebar {
-      width: 235px;
-      background: #111827;
-      padding: 15px 10px;
-      flex-shrink: 0;
-    }
-
-    .menu-title {
-      color: #9ca3af;
-      font-size: 11px;
-      text-transform: uppercase;
-      margin: 10px 10px;
-    }
-
-    .menu-btn {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      color: #d1d5db;
-      padding: 12px;
-      text-align: left;
-      border-radius: 8px;
-      margin-bottom: 3px;
-    }
-
-    .menu-btn:hover,
-    .menu-btn.active {
-      background: #1f2937;
-      color: white;
-    }
-
-    /* =========================
-       CONTENT
-    ========================= */
-
-    .content {
-      flex: 1;
-      padding: 22px;
-      min-width: 0;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .page-header {
-      margin-bottom: 20px;
-    }
-
-    .page-header h2 {
-      margin: 0 0 5px;
-      font-size: 24px;
-    }
-
-    .page-header p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    /* =========================
-       CARDS
-    ========================= */
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .metric-title {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .metric-value {
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    .green {
-      color: var(--success);
-    }
-
-    .red {
-      color: var(--danger);
-    }
-
-    .blue {
-      color: var(--primary);
-    }
-
-    .orange {
-      color: var(--warning);
-    }
-
-    /* =========================
-       FORMS
-    ========================= */
-
-    .form-card {
-      margin-bottom: 20px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    label {
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      padding: 11px 12px;
-      background: white;
-      color: var(--text);
-      outline: none;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--primary);
-    }
-
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    /* =========================
-       BUTTONS
-    ========================= */
-
-    .btn {
-      border: 0;
-      border-radius: 8px;
-      padding: 11px 16px;
-      font-weight: bold;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-    }
-
-    .btn-secondary {
-      background: #e5e7eb;
-      color: #374151;
-    }
-
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-
-    .btn-success {
-      background: var(--success);
-      color: white;
-    }
-
-    /* =========================
-       TABLE
-    ========================= */
-
-    .table-card {
-      overflow: hidden;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-      width: 100%;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 650px;
-    }
-
-    th,
-    td {
-      padding: 11px 10px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      font-size: 13px;
-    }
-
-    th {
-      background: #f9fafb;
-      color: #475467;
-    }
-
-    /* =========================
-       FILTROS
-    ========================= */
-
-    .filters {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    /* =========================
-       GRÁFICO
-    ========================= */
-
-    .chart-area {
-      min-height: 280px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      background: #fafafa;
-      border-radius: 10px;
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 900px) {
-
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .filters {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .sidebar {
-        width: 200px;
-      }
-    }
-
-    @media (max-width: 650px) {
-
-      .topbar {
-        padding: 11px 12px;
-      }
-
-      .brand h1 {
-        font-size: 17px;
-      }
-
-      .user-name {
-        display: none;
-      }
-
-      .layout {
-        display: block;
-      }
-
-      .sidebar {
-        width: 100%;
-        padding: 8px;
-        display: flex;
-        gap: 5px;
-        overflow-x: auto;
-        position: sticky;
-        top: 61px;
-        z-index: 15;
-      }
-
-      .menu-title {
-        display: none;
-      }
-
-      .menu-btn {
-        white-space: nowrap;
-        width: auto;
-        margin: 0;
-        padding: 9px 11px;
-        font-size: 12px;
-      }
-
-      .content {
-        padding: 12px;
-      }
-
-      .page-header h2 {
-        font-size: 20px;
-      }
-
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-
-      .card {
-        padding: 13px;
-      }
-
-      .metric-title {
-        font-size: 11px;
-      }
-
-      .metric-value {
-        font-size: 18px;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .field.full {
-        grid-column: auto;
-      }
-
-      .filters {
-        grid-template-columns: 1fr;
-      }
-
-      .form-actions {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .login-card {
-        padding: 22px;
-      }
-    }
-
-    @media (max-width: 380px) {
-
-      .cards {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .metric-value {
-        font-size: 16px;
-      }
-
-      .content {
-        padding: 9px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+>
+
+<title>Controle Financeiro</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --warning: #d97706;
+  --dark: #172033;
+  --gray: #64748b;
+  --light: #f1f5f9;
+  --white: #ffffff;
+  --border: #e2e8f0;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f8fafc;
+  color: var(--dark);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* LOGIN */
+
+#loginScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1e3a8a
+    );
+}
+
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.20);
+}
+
+.login-box h1 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 28px;
+}
+
+.login-box p {
+  text-align: center;
+  color: var(--gray);
+}
+
+.login-box label {
+  display: block;
+  margin-top: 18px;
+  font-weight: bold;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 14px;
+  margin-top: 7px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+}
+
+/* APP */
+
+#app {
+  display: none;
+}
+
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logout-btn {
+  border: 1px solid var(--border);
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.layout {
+  display: flex;
+  min-height: calc(100vh - 61px);
+}
+
+/* MENU */
+
+.sidebar {
+  width: 220px;
+  background: #172033;
+  padding: 15px 10px;
+  flex-shrink: 0;
+}
+
+.menu-btn {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.menu-btn:hover,
+.menu-btn.active {
+  background: #263653;
+}
+
+/* CONTENT */
+
+.content {
+  flex: 1;
+  padding: 20px;
+  min-width: 0;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.page-title {
+  margin-top: 0;
+}
+
+/* CARDS */
+
+.cards {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.card-title {
+  color: var(--gray);
+  font-size: 14px;
+}
+
+.card-value {
+  margin-top: 8px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.receita {
+  color: var(--success);
+}
+
+.despesa {
+  color: var(--danger);
+}
+
+.saldo {
+  color: var(--primary);
+}
+
+/* FORMS */
+
+.form-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
+}
+
+.primary-btn {
+  border: 0;
+  border-radius: 9px;
+  background: var(--primary);
+  color: white;
+  padding: 12px 18px;
+  font-weight: bold;
+}
+
+.primary-btn:hover {
+  background: var(--primary-dark);
+}
+
+.secondary-btn {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 9px;
+  padding: 12px 18px;
+}
+
+.danger-btn {
+  border: 0;
+  background: var(--danger);
+  color: white;
+  border-radius: 7px;
+  padding: 7px 10px;
+}
+
+/* TABLE */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
+}
+
+th,
+td {
+  padding: 11px 9px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #f8fafc;
+}
+
+/* FILTERS */
+
+.filters {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* CATEGORY */
+
+.category-list {
+  display: grid;
+  gap: 8px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
+}
+
+/* CHART */
+
+.chart-box {
+  position: relative;
+  height: 330px;
+}
+
+/* MOBILE */
+
+@media (max-width: 850px) {
+
+  .layout {
+    display: block;
+  }
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+    padding: 8px;
+    position: sticky;
+    top: 61px;
+    z-index: 15;
+  }
+
+  .menu-btn {
+    width: auto;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .content {
+    padding: 12px;
+  }
+
+  .cards {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+@media (max-width: 520px) {
+
+  .topbar {
+    padding: 10px;
+  }
+
+  .logo {
+    font-size: 17px;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .content {
+    padding: 10px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .card-value {
+    font-size: 19px;
+  }
+
+  .filters {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-box {
+    height: 260px;
+  }
+
+}
+
+</style>
 </head>
 
 <body>
 
-  <!-- =========================
-       LOGIN
-  ========================== -->
+<!-- =========================
+     LOGIN
+========================= -->
 
-  <div id="loginScreen">
+<div id="loginScreen">
 
-    <div class="login-card">
+  <div class="login-box">
 
-      <div class="login-title">
-        <h1>Controle Financeiro</h1>
-        <p>Gestão financeira pessoal e empresarial</p>
-      </div>
+    <h1>Controle Financeiro</h1>
 
-      <form id="loginForm">
+    <p>
+      Acesso ao sistema
+    </p>
 
-        <div class="field">
-          <label>Usuário ou e-mail</label>
-          <input
-            id="loginUsuario"
-            type="text"
-            autocomplete="username"
-            required
-          >
-        </div>
+    <label>
+      E-mail
+      <input
+        id="loginEmail"
+        type="email"
+        autocomplete="username"
+        placeholder="seu@email.com"
+      >
+    </label>
 
-        <br>
+    <label>
+      Senha
+      <input
+        id="loginSenha"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Sua senha"
+      >
+    </label>
 
-        <div class="field">
-          <label>Senha</label>
-          <input
-            id="loginSenha"
-            type="password"
-            autocomplete="current-password"
-            required
-          >
-        </div>
-
-        <br>
-
-        <button
-          type="submit"
-          class="btn btn-primary"
-          style="width:100%;"
-        >
-          Entrar
-        </button>
-
-      </form>
-
-    </div>
+    <button
+      class="login-btn"
+      id="loginBtn"
+    >
+      Entrar
+    </button>
 
   </div>
 
-
-  <!-- =========================
-       APLICAÇÃO
-  ========================== -->
-
-  <div id="app">
-
-    <header class="topbar">
-
-      <div class="brand">
-        <h1>Controle Financeiro</h1>
-        <span>Gestão financeira</span>
-      </div>
-
-      <div class="user-area">
-
-        <span
-          id="usuarioLogado"
-          class="user-name">
-          Usuário
-        </span>
-
-        <button
-          id="logoutBtn"
-          class="btn btn-secondary">
-          Sair
-        </button>
-
-      </div>
-
-    </header>
+</div>
 
 
-    <div class="layout">
+<!-- =========================
+     APP
+========================= -->
 
-      <!-- MENU -->
+<div id="app">
 
-      <aside class="sidebar">
+  <header class="topbar">
 
-        <div class="menu-title">
-          Principal
-        </div>
+    <div class="logo">
+      Controle Financeiro
+    </div>
 
-        <button
-          class="menu-btn active"
-          data-page="dashboard">
+    <div class="user-area">
+
+      <span
+        class="user-name"
+        id="usuarioLogado"
+      ></span>
+
+      <button
+        class="logout-btn"
+        id="logoutBtn"
+      >
+        Sair
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <div class="layout">
+
+    <nav class="sidebar">
+
+      <button
+        class="menu-btn active"
+        data-page="dashboard"
+      >
+        🏠 Dashboard
+      </button>
+
+      <button
+        class="menu-btn"
+        data-page="lancamentos"
+      >
+        💰 Lançamentos
+      </button>
+
+      <button
+        class="menu-btn"
+        data-page="centros"
+      >
+        🏢 Centros
+      </button>
+
+      <button
+        class="menu-btn"
+        data-page="categorias"
+      >
+        📂 Categorias
+      </button>
+
+      <button
+        class="menu-btn"
+        data-page="relatorios"
+      >
+        📊 Relatórios
+      </button>
+
+    </nav>
+
+
+    <main class="content">
+
+
+      <!-- =========================
+           DASHBOARD
+      ========================= -->
+
+      <section
+        id="dashboard"
+        class="page active"
+      >
+
+        <h1 class="page-title">
           Dashboard
-        </button>
+        </h1>
 
-        <button
-          class="menu-btn"
-          data-page="lancamentos">
+        <div class="cards">
+
+          <div class="card">
+            <div class="card-title">
+              Receitas
+            </div>
+
+            <div
+              class="card-value receita"
+              id="dashReceitas"
+            >
+              R$ 0,00
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-title">
+              Despesas
+            </div>
+
+            <div
+              class="card-value despesa"
+              id="dashDespesas"
+            >
+              R$ 0,00
+            </div>
+          </div>
+
+
+          <div class="card">
+            <div class="card-title">
+              Saldo
+            </div>
+
+            <div
+              class="card-value saldo"
+              id="dashSaldo"
+            >
+              R$ 0,00
+            </div>
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-title">
+              Lançamentos
+            </div>
+
+            <div
+              class="card-value"
+              id="dashLancamentos"
+            >
+              0
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>
+            Resultado financeiro
+          </h2>
+
+          <div class="chart-box">
+            <canvas id="graficoDashboard"></canvas>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           LANÇAMENTOS
+      ========================= -->
+
+      <section
+        id="lancamentos"
+        class="page"
+      >
+
+        <h1 class="page-title">
           Lançamentos
-        </button>
+        </h1>
 
-        <button
-          class="menu-btn"
-          data-page="receitas">
-          Receitas
-        </button>
 
-        <button
-          class="menu-btn"
-          data-page="despesas">
-          Despesas
-        </button>
+        <div class="card">
 
-        <div class="menu-title">
-          Cadastros
+          <h2>
+            Novo lançamento
+          </h2>
+
+          <form
+            id="lancamentoForm"
+            class="form-grid"
+          >
+
+            <div class="field">
+
+              <label>
+                Tipo
+              </label>
+
+              <select id="lancamentoTipo" required>
+
+                <option value="despesa">
+                  Despesa
+                </option>
+
+                <option value="receita">
+                  Receita
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Data
+              </label>
+
+              <input
+                id="lancamentoData"
+                type="date"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Valor
+              </label>
+
+              <input
+                id="lancamentoValor"
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="0,00"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Centro financeiro
+              </label>
+
+              <select
+                id="lancamentoCentro"
+                required
+              >
+                <option value="">
+                  Selecione
+                </option>
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Categoria
+              </label>
+
+              <select
+                id="lancamentoCategoria"
+                required
+              >
+                <option value="">
+                  Selecione
+                </option>
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Descrição
+              </label>
+
+              <input
+                id="lancamentoDescricao"
+                type="text"
+                placeholder="Ex.: Internet, salário..."
+                required
+              >
+
+            </div>
+
+
+            <div class="field full">
+
+              <label>
+                Observação
+              </label>
+
+              <input
+                id="lancamentoObservacao"
+                type="text"
+                placeholder="Observação opcional"
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <button
+                class="primary-btn"
+                type="submit"
+              >
+                Salvar lançamento
+              </button>
+
+            </div>
+
+          </form>
+
         </div>
 
-        <button
-          class="menu-btn"
-          data-page="centros">
-          Centros
-        </button>
 
-        <button
-          class="menu-btn"
-          data-page="categorias">
-          Categorias
-        </button>
-
-        <div class="menu-title">
-          Relatórios
-        </div>
-
-        <button
-          class="menu-btn"
-          data-page="relatorios">
-          Relatórios
-        </button>
-
-        <button
-          class="menu-btn"
-          data-page="dre">
-          DRE
-        </button>
-
-        <button
-          class="menu-btn"
-          data-page="graficos">
-          Gráficos
-        </button>
-
-      </aside>
+        <br>
 
 
-      <!-- CONTEÚDO -->
+        <div class="card">
 
-      <main class="content">
+          <h2>
+            Lançamentos cadastrados
+          </h2>
 
 
-        <!-- =========================
-             DASHBOARD
-        ========================== -->
+          <div class="filters">
 
-        <section
-          id="dashboard"
-          class="page active">
+            <input
+              id="filtroInicio"
+              type="date"
+            >
 
-          <div class="page-header">
-            <h2>Dashboard</h2>
-            <p>Visão geral da sua situação financeira.</p>
-          </div>
+            <input
+              id="filtroFim"
+              type="date"
+            >
 
-          <div class="cards">
+            <select id="filtroTipo">
 
-            <div class="card">
-              <div class="metric-title">
+              <option value="">
+                Todos os tipos
+              </option>
+
+              <option value="receita">
                 Receitas
-              </div>
+              </option>
 
-              <div
-                id="totalReceitas"
-                class="metric-value green">
-                R$ 0,00
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="metric-title">
+              <option value="despesa">
                 Despesas
-              </div>
+              </option>
 
-              <div
-                id="totalDespesas"
-                class="metric-value red">
-                R$ 0,00
-              </div>
-            </div>
+            </select>
 
-            <div class="card">
-              <div class="metric-title">
-                Resultado
-              </div>
 
-              <div
-                id="resultado"
-                class="metric-value blue">
-                R$ 0,00
-              </div>
-            </div>
+            <select id="filtroCentro">
 
-            <div class="card">
-              <div class="metric-title">
-                Margem
-              </div>
+              <option value="">
+                Todos os centros
+              </option>
 
-              <div
-                id="margem"
-                class="metric-value orange">
-                0%
-              </div>
-            </div>
+            </select>
 
           </div>
 
 
-          <div class="card">
+          <div class="table-wrap">
 
-            <h3>Resumo financeiro</h3>
+            <table>
 
-            <div class="chart-area">
-              Gráfico financeiro será carregado aqui.
-            </div>
+              <thead>
 
-          </div>
+                <tr>
 
-        </section>
+                  <th>
+                    Data
+                  </th>
 
-
-        <!-- =========================
-             LANÇAMENTOS
-        ========================== -->
-
-        <section
-          id="lancamentos"
-          class="page">
-
-          <div class="page-header">
-            <h2>Lançamentos</h2>
-            <p>Controle todas as movimentações financeiras.</p>
-          </div>
-
-          <div class="card form-card">
-
-            <h3>Novo lançamento</h3>
-
-            <form id="lancamentoForm">
-
-              <div class="form-grid">
-
-                <div class="field">
-                  <label>Tipo</label>
-
-                  <select id="lancamentoTipo">
-                    <option value="despesa">
-                      Despesa
-                    </option>
-
-                    <option value="receita">
-                      Receita
-                    </option>
-                  </select>
-                </div>
-
-
-                <div class="field">
-                  <label>Data</label>
-
-                  <input
-                    id="lancamentoData"
-                    type="date"
-                  >
-                </div>
-
-
-                <div class="field">
-                  <label>Centro financeiro</label>
-
-                  <select id="lancamentoCentro">
-                    <option value="">
-                      Selecione
-                    </option>
-                  </select>
-                </div>
-
-
-                <div class="field">
-                  <label>Categoria</label>
-
-                  <select id="lancamentoCategoria">
-                    <option value="">
-                      Selecione
-                    </option>
-                  </select>
-                </div>
-
-
-                <div class="field">
-                  <label>Valor</label>
-
-                  <input
-                    id="lancamentoValor"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    placeholder="0,00"
-                  >
-                </div>
-
-
-                <div class="field">
-                  <label>Forma de pagamento</label>
-
-                  <select id="lancamentoPagamento">
-
-                    <option value="">
-                      Selecione
-                    </option>
-
-                    <option>
-                      Dinheiro
-                    </option>
-
-                    <option>
-                      Pix
-                    </option>
-
-                    <option>
-                      Cartão de débito
-                    </option>
-
-                    <option>
-                      Cartão de crédito
-                    </option>
-
-                    <option>
-                      Transferência
-                    </option>
-
-                    <option>
-                      Boleto
-                    </option>
-
-                  </select>
-
-                </div>
-
-
-                <div class="field full">
-
-                  <label>Descrição</label>
-
-                  <textarea
-                    id="lancamentoDescricao"
-                    placeholder="Descrição do lançamento"
-                  ></textarea>
-
-                </div>
-
-              </div>
-
-
-              <div class="form-actions">
-
-                <button
-                  type="submit"
-                  class="btn btn-primary">
-                  Salvar lançamento
-                </button>
-
-                <button
-                  type="reset"
-                  class="btn btn-secondary">
-                  Limpar
-                </button>
-
-              </div>
-
-            </form>
-
-          </div>
-
-
-          <div class="card table-card">
-
-            <h3>Últimos lançamentos</h3>
-
-            <div class="table-wrap">
-
-              <table>
-
-                <thead>
-
-                  <tr>
-                    <th>Data</th>
-                    <th>Tipo</th>
-                    <th>Centro</th>
-                    <th>Categoria</th>
-                    <th>Valor</th>
-                  </tr>
-
-                </thead>
-
-                <tbody id="lancamentosBody">
-
-                  <tr>
-                    <td colspan="5">
-                      Nenhum lançamento.
-                    </td>
-                  </tr>
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             RECEITAS
-        ========================== -->
-
-        <section
-          id="receitas"
-          class="page">
-
-          <div class="page-header">
-
-            <h2>Receitas</h2>
-
-            <p>
-              Controle das entradas financeiras.
-            </p>
-
-          </div>
-
-          <div class="card">
-
-            <div class="filters">
-
-              <div class="field">
-                <label>Data inicial</label>
-                <input
-                  id="receitaDataInicial"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Data final</label>
-                <input
-                  id="receitaDataFinal"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Centro</label>
-                <select id="receitaCentro">
-                  <option value="">Todos</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Categoria</label>
-                <select id="receitaCategoria">
-                  <option value="">Todas</option>
-                </select>
-              </div>
-
-            </div>
-
-            <button class="btn btn-primary">
-              Consultar receitas
-            </button>
-
-          </div>
-
-          <br>
-
-          <div class="card table-card">
-
-            <h3>Receitas</h3>
-
-            <div class="table-wrap">
-
-              <table>
-
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Centro</th>
-                    <th>Categoria</th>
-                    <th>Descrição</th>
-                    <th>Valor</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td colspan="5">
-                      Nenhuma receita encontrada.
-                    </td>
-                  </tr>
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             DESPESAS
-        ========================== -->
-
-        <section
-          id="despesas"
-          class="page">
-
-          <div class="page-header">
-
-            <h2>Despesas</h2>
-
-            <p>
-              Controle das saídas financeiras.
-            </p>
-
-          </div>
-
-          <div class="card">
-
-            <div class="filters">
-
-              <div class="field">
-                <label>Data inicial</label>
-                <input
-                  id="despesaDataInicial"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Data final</label>
-                <input
-                  id="despesaDataFinal"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Centro</label>
-                <select id="despesaCentro">
-                  <option value="">Todos</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Categoria</label>
-                <select id="despesaCategoria">
-                  <option value="">Todas</option>
-                </select>
-              </div>
-
-            </div>
-
-            <button class="btn btn-primary">
-              Consultar despesas
-            </button>
-
-          </div>
-
-          <br>
-
-          <div class="card table-card">
-
-            <h3>Despesas</h3>
-
-            <div class="table-wrap">
-
-              <table>
-
-                <thead>
-                  <tr>
-                    <th>Data</th>
-                    <th>Centro</th>
-                    <th>Categoria</th>
-                    <th>Descrição</th>
-                    <th>Valor</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td colspan="5">
-                      Nenhuma despesa encontrada.
-                    </td>
-                  </tr>
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             CENTROS
-        ========================== -->
-
-        <section
-          id="centros"
-          class="page">
-
-          <div class="page-header">
-
-            <h2>Centros financeiros</h2>
-
-            <p>
-              Cadastre onde a receita ou despesa pertence.
-            </p>
-
-          </div>
-
-
-          <div class="card form-card">
-
-            <h3>Novo centro</h3>
-
-            <form id="centroForm">
-
-              <div class="form-grid">
-
-                <div class="field">
-
-                  <label>
-                    Nome
-                  </label>
-
-                  <input
-                    id="centroNome"
-                    type="text"
-                    placeholder="Ex.: Academia"
-                  >
-
-                </div>
-
-
-                <div class="field">
-
-                  <label>
-                    Status
-                  </label>
-
-                  <select id="centroAtivo">
-
-                    <option value="true">
-                      Ativo
-                    </option>
-
-                    <option value="false">
-                      Inativo
-                    </option>
-
-                  </select>
-
-                </div>
-
-              </div>
-
-
-              <div class="form-actions">
-
-                <button
-                  type="submit"
-                  class="btn btn-primary">
-                  Cadastrar centro
-                </button>
-
-              </div>
-
-            </form>
-
-          </div>
-
-
-          <div class="card table-card">
-
-            <h3>Centros cadastrados</h3>
-
-            <div class="table-wrap">
-
-              <table>
-
-                <thead>
-
-                  <tr>
-                    <th>Nome</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
-
-                </thead>
-
-                <tbody id="centrosBody">
-
-                  <tr>
-                    <td colspan="3">
-                      Nenhum centro cadastrado.
-                    </td>
-                  </tr>
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             CATEGORIAS
-        ========================== -->
-
-        <section
-          id="categorias"
-          class="page">
-
-          <div class="page-header">
-
-            <h2>Categorias</h2>
-
-            <p>
-              Cadastre, edite e organize suas categorias.
-            </p>
-
-          </div>
-
-
-          <div class="card form-card">
-
-            <h3>Nova categoria</h3>
-
-            <form id="categoriaForm">
-
-              <div class="form-grid">
-
-                <div class="field">
-
-                  <label>
-                    Nome
-                  </label>
-
-                  <input
-                    id="categoriaNome"
-                    type="text"
-                    placeholder="Ex.: Alimentação"
-                  >
-
-                </div>
-
-
-                <div class="field">
-
-                  <label>
+                  <th>
                     Tipo
-                  </label>
+                  </th>
 
-                  <select id="categoriaTipo">
+                  <th>
+                    Descrição
+                  </th>
 
-                    <option value="despesa">
-                      Despesa
-                    </option>
-
-                    <option value="receita">
-                      Receita
-                    </option>
-
-                  </select>
-
-                </div>
-
-
-                <div class="field">
-
-                  <label>
+                  <th>
                     Centro
-                  </label>
+                  </th>
 
-                  <select id="categoriaCentro">
+                  <th>
+                    Categoria
+                  </th>
 
-                    <option value="">
-                      Selecione
-                    </option>
+                  <th>
+                    Valor
+                  </th>
 
-                  </select>
+                  <th>
+                    Ação
+                  </th>
 
-                </div>
+                </tr>
 
+              </thead>
 
-                <div class="field">
+              <tbody id="lancamentosBody"></tbody>
 
-                  <label>
-                    Status
-                  </label>
-
-                  <select id="categoriaAtivo">
-
-                    <option value="true">
-                      Ativa
-                    </option>
-
-                    <option value="false">
-                      Inativa
-                    </option>
-
-                  </select>
-
-                </div>
-
-              </div>
-
-
-              <div class="form-actions">
-
-                <button
-                  type="submit"
-                  class="btn btn-primary">
-                  Cadastrar categoria
-                </button>
-
-              </div>
-
-            </form>
+            </table>
 
           </div>
 
+        </div>
 
-          <div class="card table-card">
+      </section>
 
-            <h3>Categorias cadastradas</h3>
 
-            <div class="table-wrap">
+      <!-- =========================
+           CENTROS
+      ========================= -->
 
-              <table>
+      <section
+        id="centros"
+        class="page"
+      >
 
-                <thead>
+        <h1 class="page-title">
+          Centros financeiros
+        </h1>
 
-                  <tr>
-                    <th>Nome</th>
-                    <th>Tipo</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                  </tr>
 
-                </thead>
+        <div class="card">
 
-                <tbody id="categoriasBody">
+          <h2>
+            Novo centro
+          </h2>
 
-                  <tr>
-                    <td colspan="4">
-                      Nenhuma categoria cadastrada.
-                    </td>
-                  </tr>
+          <form
+            id="centroForm"
+            class="form-grid"
+          >
 
-                </tbody>
+            <div class="field">
 
-              </table>
+              <label>
+                Nome
+              </label>
+
+              <input
+                id="centroNome"
+                type="text"
+                placeholder="Ex.: Academia"
+                required
+              >
 
             </div>
 
-          </div>
 
-        </section>
+            <div class="field">
 
+              <label>
+                Descrição
+              </label>
 
-        <!-- =========================
-             RELATÓRIOS
-        ========================== -->
-
-        <section
-          id="relatorios"
-          class="page">
-
-          <div class="page-header">
-
-            <h2>Relatórios</h2>
-
-            <p>
-              Consulte receitas e despesas por período.
-            </p>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="filters">
-
-              <div class="field">
-                <label>Data inicial</label>
-                <input
-                  id="relatorioInicial"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Data final</label>
-                <input
-                  id="relatorioFinal"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Centro</label>
-                <select id="relatorioCentro">
-                  <option value="">Todos</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label>Tipo</label>
-
-                <select id="relatorioTipo">
-
-                  <option value="">
-                    Todos
-                  </option>
-
-                  <option value="receita">
-                    Receitas
-                  </option>
-
-                  <option value="despesa">
-                    Despesas
-                  </option>
-
-                </select>
-
-              </div>
+              <input
+                id="centroDescricao"
+                type="text"
+                placeholder="Descrição"
+              >
 
             </div>
 
-            <button class="btn btn-primary">
+
+            <div class="field">
+
+              <button
+                type="submit"
+                class="primary-btn"
+              >
+                Cadastrar centro
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+
+        <br>
+
+
+        <div class="card">
+
+          <h2>
+            Centros cadastrados
+          </h2>
+
+          <div
+            id="centrosLista"
+            class="category-list"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           CATEGORIAS
+      ========================= -->
+
+      <section
+        id="categorias"
+        class="page"
+      >
+
+        <h1 class="page-title">
+          Categorias
+        </h1>
+
+
+        <div class="card">
+
+          <h2>
+            Nova categoria
+          </h2>
+
+          <form
+            id="categoriaForm"
+            class="form-grid"
+          >
+
+            <div class="field">
+
+              <label>
+                Centro
+              </label>
+
+              <select
+                id="categoriaCentro"
+                required
+              >
+                <option value="">
+                  Selecione
+                </option>
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Nome
+              </label>
+
+              <input
+                id="categoriaNome"
+                type="text"
+                placeholder="Ex.: Alimentação"
+                required
+              >
+
+            </div>
+
+
+            <div class="field">
+
+              <label>
+                Tipo
+              </label>
+
+              <select
+                id="categoriaTipo"
+                required
+              >
+
+                <option value="despesa">
+                  Despesa
+                </option>
+
+                <option value="receita">
+                  Receita
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="field">
+
+              <button
+                type="submit"
+                class="primary-btn"
+              >
+                Cadastrar categoria
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+
+        <br>
+
+
+        <div class="card">
+
+          <h2>
+            Categorias cadastradas
+          </h2>
+
+          <div
+            id="categoriasLista"
+            class="category-list"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================
+           RELATÓRIOS
+      ========================= -->
+
+      <section
+        id="relatorios"
+        class="page"
+      >
+
+        <h1 class="page-title">
+          Relatórios
+        </h1>
+
+
+        <div class="card">
+
+          <h2>
+            Período
+          </h2>
+
+          <div class="filters">
+
+            <input
+              id="relatorioInicio"
+              type="date"
+            >
+
+            <input
+              id="relatorioFim"
+              type="date"
+            >
+
+            <button
+              class="primary-btn"
+              id="gerarRelatorioBtn"
+            >
               Gerar relatório
             </button>
 
           </div>
 
+        </div>
 
-          <br>
 
-          <div class="cards">
+        <br>
 
-            <div class="card">
-              <div class="metric-title">
-                Receitas
-              </div>
 
-              <div class="metric-value green">
-                R$ 0,00
-              </div>
+        <div class="cards">
+
+          <div class="card">
+
+            <div class="card-title">
+              Receita
             </div>
 
-            <div class="card">
-              <div class="metric-title">
-                Despesas
-              </div>
-
-              <div class="metric-value red">
-                R$ 0,00
-              </div>
+            <div
+              class="card-value receita"
+              id="relReceita"
+            >
+              R$ 0,00
             </div>
-
-            <div class="card">
-              <div class="metric-title">
-                Resultado
-              </div>
-
-              <div class="metric-value blue">
-                R$ 0,00
-              </div>
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             DRE
-        ========================== -->
-
-        <section
-          id="dre"
-          class="page">
-
-          <div class="page-header">
-
-            <h2>DRE</h2>
-
-            <p>
-              Demonstrativo de resultado financeiro.
-            </p>
 
           </div>
 
 
           <div class="card">
 
-            <div class="filters">
-
-              <div class="field">
-                <label>Data inicial</label>
-                <input
-                  id="dreInicial"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Data final</label>
-                <input
-                  id="dreFinal"
-                  type="date">
-              </div>
-
-              <div class="field">
-                <label>Centro</label>
-                <select id="dreCentro">
-                  <option value="">
-                    Geral
-                  </option>
-                </select>
-              </div>
-
+            <div class="card-title">
+              Despesa
             </div>
 
-            <button class="btn btn-primary">
-              Gerar DRE
-            </button>
-
-          </div>
-
-
-          <br>
-
-
-          <div class="card">
-
-            <h3>Resultado</h3>
-
-            <div class="table-wrap">
-
-              <table>
-
-                <tbody>
-
-                  <tr>
-                    <td>Receita total</td>
-                    <td>R$ 0,00</td>
-                  </tr>
-
-                  <tr>
-                    <td>Despesas</td>
-                    <td>R$ 0,00</td>
-                  </tr>
-
-                  <tr>
-                    <td><strong>Resultado líquido</strong></td>
-                    <td><strong>R$ 0,00</strong></td>
-                  </tr>
-
-                </tbody>
-
-              </table>
-
+            <div
+              class="card-value despesa"
+              id="relDespesa"
+            >
+              R$ 0,00
             </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             GRÁFICOS
-        ========================== -->
-
-        <section
-          id="graficos"
-          class="page">
-
-          <div class="page-header">
-
-            <h2>Gráficos</h2>
-
-            <p>
-              Visualização da movimentação financeira.
-            </p>
 
           </div>
 
 
           <div class="card">
 
-            <h3>Receitas x Despesas</h3>
+            <div class="card-title">
+              Resultado
+            </div>
 
-            <div class="chart-area">
-              Gráfico será carregado aqui.
+            <div
+              class="card-value saldo"
+              id="relResultado"
+            >
+              R$ 0,00
             </div>
 
           </div>
 
-          <br>
+        </div>
 
-          <div class="card">
 
-            <h3>Despesas por categoria</h3>
+        <div class="card">
 
-            <div class="chart-area">
-              Gráfico será carregado aqui.
-            </div>
+          <h2>
+            Resultado por categoria
+          </h2>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Categoria
+                  </th>
+
+                  <th>
+                    Tipo
+                  </th>
+
+                  <th>
+                    Total
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody id="relatorioCategorias"></tbody>
+
+            </table>
 
           </div>
 
-        </section>
+        </div>
+
+      </section>
 
 
-      </main>
-
-    </div>
+    </main>
 
   </div>
 
-
-  <script>
-
-    /* =========================
-       NAVEGAÇÃO
-    ========================= */
-
-    const menuButtons =
-      document.querySelectorAll('.menu-btn');
-
-    const pages =
-      document.querySelectorAll('.page');
+</div>
 
 
-    menuButtons.forEach(button => {
+<script>
 
-      button.addEventListener('click', () => {
+/* =====================================================
+   CONFIGURAÇÃO SUPABASE
+===================================================== */
 
-        const pagina =
-          button.dataset.page;
+const SUPABASE_URL =
+  'https://swgmbgkxfxbptoqkzmkz.supabase.co';
 
-        menuButtons.forEach(btn => {
-          btn.classList.remove('active');
-        });
+const SUPABASE_KEY =
+  'sb_publishable_HQo33m6wNsiVZ89lklJJaw_wk5ms0y6
 
-        button.classList.add('active');
 
-        pages.forEach(page => {
-          page.classList.remove('active');
-        });
+const db =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-        const destino =
-          document.getElementById(pagina);
 
-        if (destino) {
-          destino.classList.add('active');
-        }
+/* =====================================================
+   ESTADO
+===================================================== */
 
-        localStorage.setItem(
-          'ultimaPaginaFinanceiro',
-          pagina
-        );
+let usuarioAtual = null;
 
-      });
+let centros = [];
 
+let categorias = [];
+
+let lancamentos = [];
+
+let grafico = null;
+
+
+/* =====================================================
+   ELEMENTOS
+===================================================== */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+/* =====================================================
+   UTILITÁRIOS
+===================================================== */
+
+function moeda(valor) {
+
+  return Number(valor || 0).toLocaleString(
+    'pt-BR',
+    {
+      style: 'currency',
+      currency: 'BRL'
+    }
+  );
+
+}
+
+
+function escapeHtml(valor) {
+
+  return String(valor ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+
+}
+
+
+function hoje() {
+
+  const data =
+    new Date();
+
+  const ano =
+    data.getFullYear();
+
+  const mes =
+    String(data.getMonth() + 1)
+      .padStart(2, '0');
+
+  const dia =
+    String(data.getDate())
+      .padStart(2, '0');
+
+  return `${ano}-${mes}-${dia}`;
+
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+async function fazerLogin() {
+
+  const email =
+    $('loginEmail').value.trim();
+
+  const senha =
+    $('loginSenha').value;
+
+  if (!email || !senha) {
+
+    alert(
+      'Informe o e-mail e a senha.'
+    );
+
+    return;
+
+  }
+
+
+  const botao =
+    $('loginBtn');
+
+  botao.disabled = true;
+
+  botao.textContent =
+    'Entrando...';
+
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.signInWithPassword({
+      email,
+      password: senha
     });
 
 
-    /* =========================
-       LOGIN TEMPORÁRIO
-    ========================= */
+  botao.disabled = false;
 
-    const loginScreen =
-      document.getElementById('loginScreen');
-
-    const app =
-      document.getElementById('app');
+  botao.textContent =
+    'Entrar';
 
 
-    document
-      .getElementById('loginForm')
-      .addEventListener('submit', event => {
+  if (error) {
 
-        event.preventDefault();
+    console.error(error);
 
-        const usuario =
-          document.getElementById('loginUsuario').value.trim();
+    alert(
+      'Não foi possível entrar:\n\n' +
+      error.message
+    );
 
-        if (!usuario) {
-          return;
-        }
+    return;
 
-        localStorage.setItem(
-          'financeiroLogado',
-          usuario
-        );
-
-        mostrarSistema(usuario);
-
-      });
+  }
 
 
-    function mostrarSistema(usuario) {
+  usuarioAtual =
+    data.user;
 
-      loginScreen.style.display = 'none';
 
-      app.style.display = 'block';
+  await iniciarSistema();
 
-      document.getElementById(
-        'usuarioLogado'
-      ).textContent = usuario;
+}
 
-      const ultimaPagina =
-        localStorage.getItem(
-          'ultimaPaginaFinanceiro'
-        );
 
-      if (ultimaPagina) {
+$('loginBtn')
+  .addEventListener(
+    'click',
+    fazerLogin
+  );
 
-        const botao =
-          document.querySelector(
-            `.menu-btn[data-page="${ultimaPagina}"]`
-          );
 
-        if (botao) {
-          botao.click();
-        }
+$('loginSenha')
+  .addEventListener(
+    'keydown',
+    e => {
+
+      if (e.key === 'Enter') {
+
+        fazerLogin();
 
       }
 
     }
+  );
 
 
-    /* =========================
-       LOGOUT
-    ========================= */
+/* =====================================================
+   SESSÃO
+===================================================== */
 
-    document
-      .getElementById('logoutBtn')
-      .addEventListener('click', () => {
+async function iniciarSistema() {
 
-        localStorage.removeItem(
-          'financeiroLogado'
+  $('loginScreen').style.display =
+    'none';
+
+  $('app').style.display =
+    'block';
+
+
+  $('usuarioLogado').textContent =
+    usuarioAtual?.email || 'Usuário';
+
+
+  await carregarTudo();
+
+
+  abrirPagina('dashboard');
+
+}
+
+
+async function restaurarSessao() {
+
+  const {
+    data
+  } =
+    await db.auth.getSession();
+
+
+  if (!data.session) {
+
+    return;
+
+  }
+
+
+  usuarioAtual =
+    data.session.user;
+
+
+  await iniciarSistema();
+
+}
+
+
+db.auth.onAuthStateChange(
+  (event, session) => {
+
+    if (
+      event === 'SIGNED_OUT'
+    ) {
+
+      $('loginScreen').style.display =
+        'flex';
+
+      $('app').style.display =
+        'none';
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+$('logoutBtn')
+  .addEventListener(
+    'click',
+    async () => {
+
+      await db.auth.signOut();
+
+    }
+  );
+
+
+/* =====================================================
+   NAVEGAÇÃO
+===================================================== */
+
+document
+  .querySelectorAll('.menu-btn')
+  .forEach(botao => {
+
+    botao.addEventListener(
+      'click',
+      () => {
+
+        abrirPagina(
+          botao.dataset.page
         );
 
-        location.reload();
+      }
+    );
 
-      });
-
-
-    /* =========================
-       DATA ATUAL
-    ========================= */
-
-    function preencherDatas() {
-
-      const hoje =
-        new Date().toISOString().split('T')[0];
-
-      document
-        .querySelectorAll('input[type="date"]')
-        .forEach(input => {
-
-          if (!input.value) {
-            input.value = hoje;
-          }
-
-        });
-
-    }
+  });
 
 
-    /* =========================
-       INICIALIZAÇÃO
-    ========================= */
+function abrirPagina(nome) {
 
-    const usuarioSalvo =
-      localStorage.getItem(
-        'financeiroLogado'
+  document
+    .querySelectorAll('.page')
+    .forEach(page => {
+
+      page.classList.remove(
+        'active'
       );
 
-    if (usuarioSalvo) {
-      mostrarSistema(usuarioSalvo);
+    });
+
+
+  document
+    .querySelectorAll('.menu-btn')
+    .forEach(botao => {
+
+      botao.classList.remove(
+        'active'
+      );
+
+    });
+
+
+  const page =
+    $(nome);
+
+  if (page) {
+
+    page.classList.add(
+      'active'
+    );
+
+  }
+
+
+  const botao =
+    document.querySelector(
+      `.menu-btn[data-page="${nome}"]`
+    );
+
+  if (botao) {
+
+    botao.classList.add(
+      'active'
+    );
+
+  }
+
+
+  if (nome === 'dashboard') {
+
+    atualizarDashboard();
+
+  }
+
+}
+
+
+/* =====================================================
+   CARREGAR TUDO
+===================================================== */
+
+async function carregarTudo() {
+
+  await carregarCentros();
+
+  await carregarCategorias();
+
+  await carregarLancamentos();
+
+  atualizarSelects();
+
+  atualizarListas();
+
+  atualizarDashboard();
+
+  gerarRelatorio();
+
+}
+
+
+/* =====================================================
+   CENTROS
+===================================================== */
+
+async function carregarCentros() {
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('centros_financeiros')
+      .select('*')
+      .order(
+        'nome',
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      'Erro ao carregar centros financeiros.'
+    );
+
+    return;
+
+  }
+
+
+  centros =
+    data || [];
+
+}
+
+
+$('centroForm')
+  .addEventListener(
+    'submit',
+    async e => {
+
+      e.preventDefault();
+
+
+      const nome =
+        $('centroNome')
+          .value
+          .trim();
+
+      const descricao =
+        $('centroDescricao')
+          .value
+          .trim();
+
+
+      if (!nome) {
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await db
+          .from('centros_financeiros')
+          .insert([
+            {
+              nome,
+              descricao,
+              ativo: true
+            }
+          ]);
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          'Erro ao cadastrar centro:\n\n' +
+          error.message
+        );
+
+        return;
+
+      }
+
+
+      $('centroForm').reset();
+
+      await carregarCentros();
+
+      atualizarSelects();
+
+      atualizarListas();
+
+      alert(
+        'Centro cadastrado com sucesso!'
+      );
+
+    }
+  );
+
+
+function atualizarListaCentros() {
+
+  const lista =
+    $('centrosLista');
+
+  if (!lista) return;
+
+
+  if (!centros.length) {
+
+    lista.innerHTML =
+      '<p>Nenhum centro cadastrado.</p>';
+
+    return;
+
+  }
+
+
+  lista.innerHTML =
+    centros.map(centro => `
+
+      <div class="category-item">
+
+        <div>
+
+          <strong>
+            ${escapeHtml(centro.nome)}
+          </strong>
+
+          ${
+            centro.descricao
+              ? `<div>${escapeHtml(centro.descricao)}</div>`
+              : ''
+          }
+
+        </div>
+
+        <button
+          class="danger-btn"
+          onclick="desativarCentro('${centro.id}')"
+        >
+          Desativar
+        </button>
+
+      </div>
+
+    `).join('');
+
+}
+
+
+async function desativarCentro(id) {
+
+  if (
+    !confirm(
+      'Deseja desativar este centro?'
+    )
+  ) return;
+
+
+  const {
+    error
+  } =
+    await db
+      .from('centros_financeiros')
+      .update({
+        ativo: false
+      })
+      .eq('id', id);
+
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
+
+
+  await carregarCentros();
+
+  atualizarSelects();
+
+  atualizarListas();
+
+}
+
+
+/* =====================================================
+   CATEGORIAS
+===================================================== */
+
+async function carregarCategorias() {
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('categorias_financeiras')
+      .select('*')
+      .order(
+        'nome',
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      'Erro ao carregar categorias.'
+    );
+
+    return;
+
+  }
+
+
+  categorias =
+    data || [];
+
+}
+
+
+$('categoriaForm')
+  .addEventListener(
+    'submit',
+    async e => {
+
+      e.preventDefault();
+
+
+      const centro_id =
+        $('categoriaCentro').value;
+
+      const nome =
+        $('categoriaNome')
+          .value
+          .trim();
+
+      const tipo =
+        $('categoriaTipo').value;
+
+
+      if (!centro_id || !nome) {
+
+        alert(
+          'Preencha os campos obrigatórios.'
+        );
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await db
+          .from('categorias_financeiras')
+          .insert([
+            {
+              centro_id,
+              nome,
+              tipo,
+              ativo: true
+            }
+          ]);
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          'Erro ao cadastrar categoria:\n\n' +
+          error.message
+        );
+
+        return;
+
+      }
+
+
+      $('categoriaForm').reset();
+
+      await carregarCategorias();
+
+      atualizarSelects();
+
+      atualizarListas();
+
+      alert(
+        'Categoria cadastrada com sucesso!'
+      );
+
+    }
+  );
+
+
+function atualizarListaCategorias() {
+
+  const lista =
+    $('categoriasLista');
+
+  if (!lista) return;
+
+
+  const ativas =
+    categorias.filter(
+      c => c.ativo !== false
+    );
+
+
+  if (!ativas.length) {
+
+    lista.innerHTML =
+      '<p>Nenhuma categoria cadastrada.</p>';
+
+    return;
+
+  }
+
+
+  lista.innerHTML =
+    ativas.map(categoria => {
+
+      const centro =
+        centros.find(
+          c =>
+            c.id ===
+            categoria.centro_id
+        );
+
+
+      return `
+
+        <div class="category-item">
+
+          <div>
+
+            <strong>
+              ${escapeHtml(categoria.nome)}
+            </strong>
+
+            <div>
+              ${
+                categoria.tipo === 'receita'
+                  ? 'Receita'
+                  : 'Despesa'
+              }
+
+              ${
+                centro
+                  ? ' • ' +
+                    escapeHtml(centro.nome)
+                  : ''
+              }
+            </div>
+
+          </div>
+
+          <button
+            class="danger-btn"
+            onclick="desativarCategoria('${categoria.id}')"
+          >
+            Desativar
+          </button>
+
+        </div>
+
+      `;
+
+    }).join('');
+
+}
+
+
+async function desativarCategoria(id) {
+
+  if (
+    !confirm(
+      'Deseja desativar esta categoria?'
+    )
+  ) return;
+
+
+  const {
+    error
+  } =
+    await db
+      .from('categorias_financeiras')
+      .update({
+        ativo: false
+      })
+      .eq('id', id);
+
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
+
+
+  await carregarCategorias();
+
+  atualizarSelects();
+
+  atualizarListas();
+
+}
+
+
+/* =====================================================
+   SELECTS
+===================================================== */
+
+function atualizarSelects() {
+
+  const centroAtivos =
+    centros.filter(
+      c => c.ativo !== false
+    );
+
+
+  const categoriaAtivas =
+    categorias.filter(
+      c => c.ativo !== false
+    );
+
+
+  const centroOptions =
+    `
+      <option value="">
+        Selecione
+      </option>
+    ` +
+    centroAtivos
+      .map(
+        c => `
+          <option value="${c.id}">
+            ${escapeHtml(c.nome)}
+          </option>
+        `
+      )
+      .join('');
+
+
+  $('lancamentoCentro').innerHTML =
+    centroOptions;
+
+  $('categoriaCentro').innerHTML =
+    centroOptions;
+
+
+  $('filtroCentro').innerHTML =
+    `
+      <option value="">
+        Todos os centros
+      </option>
+    ` +
+    centroAtivos
+      .map(
+        c => `
+          <option value="${c.id}">
+            ${escapeHtml(c.nome)}
+          </option>
+        `
+      )
+      .join('');
+
+
+  $('lancamentoCategoria').innerHTML =
+    `
+      <option value="">
+        Selecione
+      </option>
+    ` +
+    categoriaAtivas
+      .map(
+        c => `
+          <option value="${c.id}">
+            ${escapeHtml(c.nome)}
+          </option>
+        `
+      )
+      .join('');
+
+}
+
+
+/* =====================================================
+   LANÇAMENTOS
+===================================================== */
+
+async function carregarLancamentos() {
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('lancamentos_financeiros')
+      .select('*')
+      .order(
+        'data',
+        {
+          ascending: false
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      'Erro ao carregar lançamentos:\n\n' +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  lancamentos =
+    data || [];
+
+}
+
+
+$('lancamentoForm')
+  .addEventListener(
+    'submit',
+    async e => {
+
+      e.preventDefault();
+
+
+      const tipo =
+        $('lancamentoTipo').value;
+
+      const data =
+        $('lancamentoData').value;
+
+      const valor =
+        Number(
+          $('lancamentoValor').value
+        );
+
+      const centro_id =
+        $('lancamentoCentro').value;
+
+      const categoria_id =
+        $('lancamentoCategoria').value;
+
+      const descricao =
+        $('lancamentoDescricao')
+          .value
+          .trim();
+
+      const observacao =
+        $('lancamentoObservacao')
+          .value
+          .trim();
+
+
+      if (
+        !tipo ||
+        !data ||
+        !valor ||
+        !centro_id ||
+        !categoria_id ||
+        !descricao
+      ) {
+
+        alert(
+          'Preencha todos os campos obrigatórios.'
+        );
+
+        return;
+
+      }
+
+
+      const {
+        error
+      } =
+        await db
+          .from('lancamentos_financeiros')
+          .insert([
+            {
+              tipo,
+              data,
+              valor,
+              centro_id,
+              categoria_id,
+              descricao,
+              observacao,
+              ativo: true
+            }
+          ]);
+
+
+      if (error) {
+
+        console.error(error);
+
+        alert(
+          'Erro ao salvar lançamento:\n\n' +
+          error.message
+        );
+
+        return;
+
+      }
+
+
+      $('lancamentoForm').reset();
+
+      $('lancamentoData').value =
+        hoje();
+
+
+      await carregarLancamentos();
+
+      atualizarListas();
+
+      atualizarDashboard();
+
+      gerarRelatorio();
+
+      alert(
+        'Lançamento salvo com sucesso!'
+      );
+
+    }
+  );
+
+
+function atualizarListaLancamentos() {
+
+  const body =
+    $('lancamentosBody');
+
+  if (!body) return;
+
+
+  let lista =
+    [...lancamentos];
+
+
+  const inicio =
+    $('filtroInicio').value;
+
+  const fim =
+    $('filtroFim').value;
+
+  const tipo =
+    $('filtroTipo').value;
+
+  const centro =
+    $('filtroCentro').value;
+
+
+  if (inicio) {
+
+    lista =
+      lista.filter(
+        l => l.data >= inicio
+      );
+
+  }
+
+
+  if (fim) {
+
+    lista =
+      lista.filter(
+        l => l.data <= fim
+      );
+
+  }
+
+
+  if (tipo) {
+
+    lista =
+      lista.filter(
+        l => l.tipo === tipo
+      );
+
+  }
+
+
+  if (centro) {
+
+    lista =
+      lista.filter(
+        l => l.centro_id === centro
+      );
+
+  }
+
+
+  lista =
+    lista.filter(
+      l => l.ativo !== false
+    );
+
+
+  if (!lista.length) {
+
+    body.innerHTML = `
+      <tr>
+        <td colspan="7">
+          Nenhum lançamento encontrado.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  body.innerHTML =
+    lista.map(l => {
+
+      const centroObj =
+        centros.find(
+          c =>
+            c.id ===
+            l.centro_id
+        );
+
+
+      const categoriaObj =
+        categorias.find(
+          c =>
+            c.id ===
+            l.categoria_id
+        );
+
+
+      return `
+
+        <tr>
+
+          <td>
+            ${escapeHtml(l.data || '')}
+          </td>
+
+          <td class="${
+            l.tipo === 'receita'
+              ? 'receita'
+              : 'despesa'
+          }">
+
+            ${
+              l.tipo === 'receita'
+                ? 'Receita'
+                : 'Despesa'
+            }
+
+          </td>
+
+          <td>
+            ${escapeHtml(l.descricao || '')}
+          </td>
+
+          <td>
+            ${
+              centroObj
+                ? escapeHtml(centroObj.nome)
+                : '-'
+            }
+          </td>
+
+          <td>
+            ${
+              categoriaObj
+                ? escapeHtml(
+                    categoriaObj.nome
+                  )
+                : '-'
+            }
+          </td>
+
+          <td>
+            ${moeda(l.valor)}
+          </td>
+
+          <td>
+
+            <button
+              class="danger-btn"
+              onclick="desativarLancamento('${l.id}')"
+            >
+              Excluir
+            </button>
+
+          </td>
+
+        </tr>
+
+      `;
+
+    }).join('');
+
+}
+
+
+async function desativarLancamento(id) {
+
+  if (
+    !confirm(
+      'Deseja excluir este lançamento?'
+    )
+  ) return;
+
+
+  const {
+    error
+  } =
+    await db
+      .from('lancamentos_financeiros')
+      .update({
+        ativo: false
+      })
+      .eq('id', id);
+
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
+
+
+  await carregarLancamentos();
+
+  atualizarListaLancamentos();
+
+  atualizarDashboard();
+
+  gerarRelatorio();
+
+}
+
+
+[
+  'filtroInicio',
+  'filtroFim',
+  'filtroTipo',
+  'filtroCentro'
+].forEach(id => {
+
+  $(id)
+    .addEventListener(
+      'change',
+      atualizarListaLancamentos
+    );
+
+});
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function atualizarDashboard() {
+
+  const lista =
+    lancamentos.filter(
+      l => l.ativo !== false
+    );
+
+
+  const receitas =
+    lista
+      .filter(
+        l => l.tipo === 'receita'
+      )
+      .reduce(
+        (soma, l) =>
+          soma + Number(l.valor || 0),
+        0
+      );
+
+
+  const despesas =
+    lista
+      .filter(
+        l => l.tipo === 'despesa'
+      )
+      .reduce(
+        (soma, l) =>
+          soma + Number(l.valor || 0),
+        0
+      );
+
+
+  const saldo =
+    receitas - despesas;
+
+
+  $('dashReceitas').textContent =
+    moeda(receitas);
+
+  $('dashDespesas').textContent =
+    moeda(despesas);
+
+  $('dashSaldo').textContent =
+    moeda(saldo);
+
+  $('dashLancamentos').textContent =
+    lista.length;
+
+
+  atualizarGrafico(
+    receitas,
+    despesas
+  );
+
+  atualizarListaLancamentos();
+
+}
+
+
+function atualizarGrafico(
+  receitas,
+  despesas
+) {
+
+  const canvas =
+    $('graficoDashboard');
+
+  if (!canvas) return;
+
+
+  if (grafico) {
+
+    grafico.destroy();
+
+  }
+
+
+  grafico =
+    new Chart(
+      canvas,
+      {
+        type: 'doughnut',
+
+        data: {
+
+          labels: [
+            'Receitas',
+            'Despesas'
+          ],
+
+          datasets: [
+            {
+              data: [
+                receitas,
+                despesas
+              ]
+            }
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          plugins: {
+
+            legend: {
+              position: 'bottom'
+            }
+
+          }
+
+        }
+
+      }
+    );
+
+}
+
+
+/* =====================================================
+   RELATÓRIO
+===================================================== */
+
+$('gerarRelatorioBtn')
+  .addEventListener(
+    'click',
+    gerarRelatorio
+  );
+
+
+function gerarRelatorio() {
+
+  let lista =
+    lancamentos.filter(
+      l => l.ativo !== false
+    );
+
+
+  const inicio =
+    $('relatorioInicio').value;
+
+  const fim =
+    $('relatorioFim').value;
+
+
+  if (inicio) {
+
+    lista =
+      lista.filter(
+        l => l.data >= inicio
+      );
+
+  }
+
+
+  if (fim) {
+
+    lista =
+      lista.filter(
+        l => l.data <= fim
+      );
+
+  }
+
+
+  const receitas =
+    lista
+      .filter(
+        l => l.tipo === 'receita'
+      )
+      .reduce(
+        (soma, l) =>
+          soma + Number(l.valor || 0),
+        0
+      );
+
+
+  const despesas =
+    lista
+      .filter(
+        l => l.tipo === 'despesa'
+      )
+      .reduce(
+        (soma, l) =>
+          soma + Number(l.valor || 0),
+        0
+      );
+
+
+  $('relReceita').textContent =
+    moeda(receitas);
+
+  $('relDespesa').textContent =
+    moeda(despesas);
+
+  $('relResultado').textContent =
+    moeda(receitas - despesas);
+
+
+  const agrupado = {};
+
+
+  lista.forEach(l => {
+
+    const categoria =
+      categorias.find(
+        c =>
+          c.id ===
+          l.categoria_id
+      );
+
+
+    const nome =
+      categoria
+        ? categoria.nome
+        : 'Sem categoria';
+
+
+    const chave =
+      `${l.tipo}|${nome}`;
+
+
+    if (!agrupado[chave]) {
+
+      agrupado[chave] = {
+        nome,
+        tipo: l.tipo,
+        valor: 0
+      };
+
     }
 
-    preencherDatas();
 
-  </script>
+    agrupado[chave].valor +=
+      Number(l.valor || 0);
+
+  });
+
+
+  const linhas =
+    Object.values(
+      agrupado
+    );
+
+
+  $('relatorioCategorias').innerHTML =
+    linhas.length
+      ?
+
+      linhas
+        .sort(
+          (a, b) =>
+            b.valor - a.valor
+        )
+        .map(
+          item => `
+
+            <tr>
+
+              <td>
+                ${escapeHtml(item.nome)}
+              </td>
+
+              <td class="${
+                item.tipo === 'receita'
+                  ? 'receita'
+                  : 'despesa'
+              }">
+
+                ${
+                  item.tipo === 'receita'
+                    ? 'Receita'
+                    : 'Despesa'
+                }
+
+              </td>
+
+              <td>
+                ${moeda(item.valor)}
+              </td>
+
+            </tr>
+
+          `
+        )
+        .join('')
+
+      :
+
+      `
+        <tr>
+          <td colspan="3">
+            Nenhum lançamento no período.
+          </td>
+        </tr>
+      `;
+
+}
+
+
+/* =====================================================
+   ATUALIZAÇÃO DAS LISTAS
+===================================================== */
+
+function atualizarListas() {
+
+  atualizarListaCentros();
+
+  atualizarListaCategorias();
+
+  atualizarListaLancamentos();
+
+}
+
+
+/* =====================================================
+   DATA INICIAL
+===================================================== */
+
+$('lancamentoData').value =
+  hoje();
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+restaurarSessao();
+
+</script>
 
 </body>
 </html>
