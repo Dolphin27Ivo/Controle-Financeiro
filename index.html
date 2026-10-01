@@ -1860,6 +1860,8 @@ async function carregarTudo() {
 
   gerarRelatorio();
 
+  gerarDre();
+
 }
   $('dreCentro').innerHTML =
   `
@@ -2370,6 +2372,21 @@ function atualizarSelects() {
         `
       )
       .join('');
+  $('dreCentro').innerHTML =
+  `
+    <option value="">
+      Todos os centros
+    </option>
+  ` +
+  centroAtivos
+    .map(
+      c => `
+        <option value="${c.id}">
+          ${escapeHtml(c.nome)}
+        </option>
+      `
+    )
+    .join('');
   $('relatorioCentro').innerHTML =
   `
     <option value="">
