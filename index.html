@@ -3467,14 +3467,85 @@ function gerarDre() {
 
   /* MOSTRAR NA TELA */
 
-  $('dreReceita').textContent =
-    moeda(receitas);
+$('dreReceita').textContent =
+  moeda(receitas);
 
-  $('dreDespesa').textContent =
-    moeda(despesas);
+$('dreDespesa').textContent =
+  moeda(despesas);
 
-  $('dreResultado').textContent =
-    moeda(resultado);
+$('dreResultado').textContent =
+  moeda(resultado);
+
+
+/* DEMONSTRATIVO POR CATEGORIA */
+
+const categoriasDre = {};
+
+lista.forEach(
+  l => {
+
+    const categoria =
+      categorias.find(
+        c =>
+          c.id === l.categoria_id
+      );
+
+    const nomeCategoria =
+      categoria
+        ? categoria.nome
+        : 'Sem categoria';
+
+    const chave =
+      `${l.tipo}|${nomeCategoria}`;
+
+    if (!categoriasDre[chave]) {
+
+      categoriasDre[chave] = {
+        nome: nomeCategoria,
+        tipo: l.tipo,
+        total: 0
+      };
+
+    }
+
+    categoriasDre[chave].total +=
+      Number(l.valor || 0);
+
+  }
+);
+
+
+$('dreCategorias').innerHTML =
+  Object.values(categoriasDre)
+    .sort(
+      (a, b) =>
+        a.tipo.localeCompare(b.tipo) ||
+        a.nome.localeCompare(b.nome)
+    )
+    .map(
+      item => `
+        <tr>
+
+          <td>
+            ${escapeHtml(item.nome)}
+          </td>
+
+          <td>
+            ${
+              item.tipo === 'receita'
+                ? 'Receita'
+                : 'Despesa'
+            }
+          </td>
+
+          <td>
+            ${moeda(item.total)}
+          </td>
+
+        </tr>
+      `
+    )
+    .join('');
 
 }
 
