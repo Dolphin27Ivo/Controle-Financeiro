@@ -2789,9 +2789,28 @@ async function desativarLancamento(id) {
 
 function atualizarDashboard() {
 
+  const dataAtual =
+    new Date();
+
+  const anoAtual =
+    dataAtual.getFullYear();
+
+  const mesAtual =
+    String(
+      dataAtual.getMonth() + 1
+    ).padStart(2, '0');
+
+
+  const periodoAtual =
+    `${anoAtual}-${mesAtual}`;
+
+
   const lista =
     lancamentos.filter(
-      l => l.ativo !== false
+      l =>
+        l.ativo !== false &&
+        String(l.data_lancamento || '')
+          .startsWith(periodoAtual)
     );
 
 
