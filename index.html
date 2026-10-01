@@ -572,6 +572,12 @@ th {
       >
         📊 Relatórios
       </button>
+      <button
+  class="menu-btn"
+  data-page="dre"
+>
+  📑 DRE
+</button>
 
     </nav>
 
@@ -1314,7 +1320,165 @@ th {
         </div>
 
       </section>
+      <!-- =========================
+           DRE
+      ========================= -->
 
+      <section
+        id="dre"
+        class="page"
+      >
+
+        <h1 class="page-title">
+          DRE
+        </h1>
+
+        <p
+          style="
+            margin-top: -10px;
+            margin-bottom: 20px;
+            color: #64748b;
+            font-size: 15px;
+          "
+        >
+          Demonstrativo de Resultado
+        </p>
+
+
+        <div class="card">
+
+          <h2>
+            Filtros da DRE
+          </h2>
+
+          <div class="filters">
+
+            <input
+              id="dreInicio"
+              type="date"
+            >
+
+            <input
+              id="dreFim"
+              type="date"
+            >
+
+            <select id="dreCentro">
+
+              <option value="">
+                Todos os centros
+              </option>
+
+            </select>
+
+            <button
+              class="primary-btn"
+              id="gerarDreBtn"
+            >
+              Gerar DRE
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <br>
+
+
+        <div class="cards">
+
+          <div class="card">
+
+            <div class="card-title">
+              Receita
+            </div>
+
+            <div
+              class="card-value receita"
+              id="dreReceita"
+            >
+              R$ 0,00
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-title">
+              Despesa
+            </div>
+
+            <div
+              class="card-value despesa"
+              id="dreDespesa"
+            >
+              R$ 0,00
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-title">
+              Resultado
+            </div>
+
+            <div
+              class="card-value saldo"
+              id="dreResultado"
+            >
+              R$ 0,00
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>
+            Demonstrativo por categoria
+          </h2>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+
+                  <th>
+                    Categoria
+                  </th>
+
+                  <th>
+                    Tipo
+                  </th>
+
+                  <th>
+                    Total
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody
+                id="dreCategorias"
+              ></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
 
     </main>
 
