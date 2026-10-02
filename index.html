@@ -3440,13 +3440,14 @@ function atualizarGraficoCategoriasRelatorio(lista) {
   if (!canvas) return;
 
 
-  if (
-    window.graficoCategoriasRelatorio
-  ) {
+const graficoExistente =
+  Chart.getChart(canvas);
 
-    window.graficoCategoriasRelatorio.destroy();
+if (graficoExistente) {
+  graficoExistente.destroy();
+}
 
-  }
+window.graficoCategoriasRelatorio = null;
 
 
   const despesas =
