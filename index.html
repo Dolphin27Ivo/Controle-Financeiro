@@ -4017,9 +4017,28 @@ function atualizarListas() {
    DATA INICIAL
 ===================================================== */
 
-$('lancamentoData').value =
+const dataHoje =
   hoje();
 
+
+$('lancamentoData').value =
+  dataHoje;
+
+
+$('relatorioInicio').value =
+  dataHoje;
+
+
+$('relatorioFim').value =
+  dataHoje;
+
+
+$('dreInicio').value =
+  dataHoje;
+
+
+$('dreFim').value =
+  dataHoje;
 
 /* =====================================================
    INICIALIZAÇÃO
