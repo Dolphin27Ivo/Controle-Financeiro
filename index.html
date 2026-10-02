@@ -3571,6 +3571,224 @@ function atualizarGraficoCategoriasRelatorio(lista) {
 
       }
     );
+    atualizarGraficoCategoriasRelatorio(lista);
+
+}
+  /* =====================================================
+   GRÁFICO DE DESPESAS POR CATEGORIA
+===================================================== */
+
+function atualizarGraficoCategoriasRelatorio(lista) {
+
+  let cardGrafico = null;
+
+  const cards =
+    document.querySelectorAll(
+      '#relatorios .card'
+    );
+
+  cards.forEach(card => {
+
+    const titulo =
+      card.querySelector('h2');
+
+    if (
+      titulo &&
+      titulo.textContent.trim() ===
+        'Despesas por categoria'
+    ) {
+      cardGrafico = card;
+    }
+
+  });
+
+
+  if (!cardGrafico) {
+
+    cardGrafico =
+      document.createElement('div');
+
+    cardGrafico.className = 'card';
+
+    cardGrafico.innerHTML = `
+      <h2>
+        Despesas por categoria
+      </h2>
+    `;
+
+    const relatorios =
+      $('relatorios');
+
+    if (relatorios) {
+      relatorios.appendChild(
+        cardGrafico
+      );
+    }
+
+  }
+
+
+  let canvas =
+    $('graficoCategoriasRelatorio');
+
+
+  if (!canvas) {
+
+    const area =
+      document.createElement('div');
+
+    area.style.width = '100%';
+    area.style.height = '380px';
+    area.style.position = 'relative';
+    area.style.marginTop = '20px';
+
+    canvas =
+      document.createElement('canvas');
+
+    canvas.id =
+      'graficoCategoriasRelatorio';
+
+    area.appendChild(canvas);
+
+    cardGrafico.appendChild(area);
+
+  }
+
+
+  if (
+    window.graficoCategoriasRelatorio
+  ) {
+
+    window.graficoCategoriasRelatorio
+      .destroy();
+
+  }
+
+
+  const despesas =
+    lista.filter(
+      l =>
+        l.tipo === 'despesa'
+    );
+
+
+  const agrupado = {};
+
+
+  despesas.forEach(l => {
+
+    const categoria =
+      categorias.find(
+        c =>
+          c.id ===
+          l.categoria_id
+      );
+
+
+    const nome =
+      categoria
+        ? categoria.nome
+        : 'Sem categoria';
+
+
+    if (!agrupado[nome]) {
+
+      agrupado[nome] = 0;
+
+    }
+
+
+    agrupado[nome] +=
+      Number(l.valor || 0);
+
+  });
+
+
+  const dados =
+    Object.entries(
+      agrupado
+    )
+      .sort(
+        (a, b) =>
+          b[1] - a[1]
+      );
+
+
+  window.graficoCategoriasRelatorio =
+    new Chart(
+      canvas,
+      {
+        type: 'bar',
+
+        data: {
+
+          labels:
+            dados.map(
+              item =>
+                item[0]
+            ),
+
+          datasets: [
+
+            {
+              label:
+                'Despesas',
+
+              data:
+                dados.map(
+                  item =>
+                    item[1]
+                ),
+
+              backgroundColor:
+                '#dc2626',
+
+              borderRadius:
+                6
+
+            }
+
+          ]
+
+        },
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio:
+            false,
+
+          plugins: {
+
+            legend: {
+              display: false
+            }
+
+          },
+
+          scales: {
+
+            y: {
+
+              beginAtZero: true,
+
+              ticks: {
+
+                callback:
+                  value =>
+                    moeda(value)
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+    );
 
 }
 
